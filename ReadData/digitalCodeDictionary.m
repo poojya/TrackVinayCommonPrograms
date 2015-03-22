@@ -21,6 +21,7 @@ codeList = [...
     'IT'; 
     'M0'; 
     'M1'; 
+    'M2'; % [Vinay] - for CRS, mapping2Times for 3rd gabor
     'ON'; 
     'OF'; 
     'OR'; 
@@ -29,6 +30,7 @@ codeList = [...
     'SA'; 
     'SF'; 
     'SI'; 
+    'SP'; % [Vinay] - for CRS, spatial phase
     'ST'; 
     'TC'; 
     'TE'; 
@@ -37,6 +39,7 @@ codeList = [...
     'TS'; 
     'T0'; 
     'T1'; 
+    'PN'; % [Vinay] - for CRS, protocol Number
 ];
 
 if isempty(str)

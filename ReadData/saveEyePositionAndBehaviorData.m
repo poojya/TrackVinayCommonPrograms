@@ -90,7 +90,9 @@ for i=1:numTrials
             
             goodTrials.targetPos(correctIndex) = numStimuli;
             goodTrials.targetTime(correctIndex) = stimOnTimes(end);
-            goodTrials.fixateMS(correctIndex) = trials.fixate.timeMS;
+            if isfield(trials,'fixate') % [Vinay] - This variable/field is absent if task does not require fixation
+                goodTrials.fixateMS(correctIndex) = trials.fixate.timeMS;
+            end
             goodTrials.fixonMS(correctIndex) = trials.fixOn.timeMS;
             goodTrials.stimOnTimes{correctIndex} = stimOnTimes;
             
@@ -105,7 +107,10 @@ for i=1:numTrials
                     stimTime = stimOnTimes(j);
                     stp=find(eyeAllTimes>=stimTime, 1 );
                     
-                    stimData.stimOnsetTimeFromFixate(stimNumber) = stimTime-trials.fixate.timeMS;
+%                     stimData.stimOnsetTimeFromFixate(stimNumber) = stimTime-trials.fixate.timeMS;
+                    if isfield(trials,'fixate') % [Vinay] - This variable/field is absent if task does not require fixation
+                        stimData.stimOnsetTimeFromFixate(stimNumber) = stimTime-trials.fixate.timeMS;
+                    end
                     stimData.stimPos(stimNumber) = j;
                     stimData.stimType(stimNumber) = stimType(j);
                     
@@ -194,7 +199,9 @@ for i=1:numTrials
             
             goodTrials.targetPos(correctIndex) = numStimuli;
             goodTrials.targetTime(correctIndex) = stimOnTimes(end);
-            goodTrials.fixateMS(correctIndex) = trials.fixate.timeMS;
+            if isfield(trials,'fixate') % [Vinay] - This variable/field is absent if task does not require fixation
+                goodTrials.fixateMS(correctIndex) = trials.fixate.timeMS;
+            end
             goodTrials.fixonMS(correctIndex) = trials.fixOn.timeMS;
             goodTrials.stimOnTimes{correctIndex} = stimOnTimes;
             
@@ -212,7 +219,9 @@ for i=1:numTrials
                     stimTime = stimOnTimes(gaborPos(j));
                     stp=find(eyeAllTimes>=stimTime,1);
                     
-                    stimData.stimOnsetTimeFromFixate(stimNumber) = stimTime-trials.fixate.timeMS;
+                    if isfield(trials,'fixate') % [Vinay] - This variable/field is absent if task does not require fixation
+                        stimData.stimOnsetTimeFromFixate(stimNumber) = stimTime-trials.fixate.timeMS;
+                    end
                     stimData.stimPos(stimNumber) = j;
                     
                     startingPos = max(1,stp+eyeRangePos(1));
@@ -289,7 +298,21 @@ goodStimPos = stimResults.stimPosition(goodStimNums);
 % useTheseStims = find(goodStimPos>1);
 useTheseStims = find(goodStimPos>0); % Use all stimPositions, including 1
 
-[eyeDataDegX,eyeDataDegY] = convertEyeDataToDeg(eyeData(useTheseStims),0);
+% [Vinay] - Decide whether to return a cell array for eyeDataDegX/Y
+% depending on eyePosDataX/Y's length across trials. If the
+% lengths are not same then construct eyeDataDegX/Y as cell arrays
+% Non-cell arrays, in this case, would flag dimension mismatch
+for i = 1:length(eyeData)
+    lenEyePos(i) = length(eyeData(i).eyePosDataX);
+end
+
+returnCellArray = 0;
+if ~isequal(diff(lenEyePos),zeros(size(lenEyePos)))
+    returnCellArray = 1;
+end
+%---
+
+[eyeDataDegX,eyeDataDegY] = convertEyeDataToDeg(eyeData(useTheseStims),returnCellArray); % [Vinay] - pass returnCellArray (instead of default 0)
 folderSave = fullfile(folderName,'segmentedData','eyeData');
 makeDirectory(folderSave);
 save(fullfile(folderSave,'eyeDataDeg.mat'),'eyeDataDegX','eyeDataDegY');
@@ -314,7 +337,8 @@ header = readLLFile('i',datFileName);
 minFixationDurationMS = round((1-header.behaviorSetting.data.fixateJitterPC/100) * header.behaviorSetting.data.fixateMS);
 stimDurationMS = header.mapStimDurationMS.data;
 interStimDurationMS = header.mapInterstimDurationMS.data;
-maxStimPos = ceil(header.maxTargetTimeMS.data)/(stimDurationMS+interStimDurationMS) +1;
+% maxStimPos = ceil(header.maxTargetTimeMS.data)/(stimDurationMS+interStimDurationMS) +1;
+maxStimPos = ceil((header.maxTargetTimeMS.data)/(stimDurationMS+interStimDurationMS)) +1; % [Vinay] - ceil should be for the entire expression?
 
 durationsMS.minFixationDurationMS = minFixationDurationMS;
 durationsMS.interStimDurationMS = interStimDurationMS;
@@ -371,8 +395,19 @@ for i=1:numTrials
                 edp = stimDurationMS/intervalTimeMS - 1;
                 list = stp:edp;
                 
-                eXshort = eX(stimOnsetPos+list);
-                eYshort = eY(stimOnsetPos+list);
+                % [Vinay] - shift list if there are not enough data points
+                % in eX/Y
+                wrtStimOnsetPos = stimOnsetPos+list;
+                shiftList = 0;
+                if(wrtStimOnsetPos(end)-length(eX)>0)
+                    shiftList = wrtStimOnsetPos(end)-length(eX);
+                end
+                
+%                 eXshort = eX(stimOnsetPos+list);
+%                 eYshort = eY(stimOnsetPos+list);
+                
+                eXshort = eX(stimOnsetPos+list-shiftList);
+                eYshort = eY(stimOnsetPos+list-shiftList);
 
                 eXshortDeg = cal.m11*eXshort + cal.m21 * eYshort + cal.tX;
                 eYshortDeg = cal.m12*eXshort + cal.m22 * eYshort + cal.tY;

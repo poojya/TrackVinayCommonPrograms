@@ -24,7 +24,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function getLFPandSpikesBlackrock(subjectName,expDate,protocolName,folderSourceString,gridType,analogElectrodesToStore,neuralChannelsToStore,...
-    goodStimTimes,timeStartFromBaseLine,deltaT,Fs,hFile,getLFP,getSpikes)
+    goodStimTimes,timeStartFromBaseLine,deltaT,Fs,hFile,getLFP,getSpikes,notchLineNoise) 
+% [Vinay] - added option to notch out line noise and its harmonics
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Initialize %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~exist('hFile','var');        hFile = [];                            end
@@ -199,7 +200,56 @@ if getLFP && (cAnalog>0)
                     [~, ~, analogData(j,:)] = ns_GetAnalogData(hFile, ...
                         electrodeListIDsStored(i), goodStimPos(j)+1, numSamples);
                 end
-                save(fullfile(outputFolder,['elec' num2str(electrodesStored(i)) '.mat']),'analogData','analogInfo');
+                
+                % [Vinay] - notch Line noise and harmonics if required ---
+                if notchLineNoise
+                    disp('****Notching Line Noise and its harmonics****');
+                    clear analogDataFull
+                    [~, ~, analogDataFull] = ns_GetAnalogData(hFile, ...
+                        electrodeListIDsStored(i), 1, goodStimPos(j)+1+numSamples); % Get the full length analogData
+                    % j is at the last stim
+
+                    clear analogDataFullNotched
+
+                    Fs = analogInfo.SampleRate; % sampling rate
+                    N = length(analogDataFull); % length of the full length analog data
+
+                    F = Fs/N*(0:N-1); % Span of frequencies to be considered
+                    F = F';
+
+                    clear notchRange
+                    notchRange{1} = find(F>48 & F<52); % 50 Hz line noise            
+                    notchRange{2} = find(F>98 & F<102); % 1st harmonic
+                    notchRange{3} = find(F>148 & F<152); % 2nd harmonic
+
+                    notchRange{4} = find(F>(Fs-52) & F<(Fs-48));
+                    notchRange{5} = find(F>(Fs-102) & F<(Fs-98));
+                    notchRange{6} = find(F>(Fs-152) & F<(Fs-148));
+
+                    % Take FFT and notch it!
+                    analogDataFullfft = fft(analogDataFull);
+                    analogDataFullfft(notchRange{1}) = 0;
+                    analogDataFullfft(notchRange{2}) = 0;
+                    analogDataFullfft(notchRange{3}) = 0;
+                    analogDataFullfft(notchRange{4}) = 0;
+                    analogDataFullfft(notchRange{5}) = 0;
+                    analogDataFullfft(notchRange{6}) = 0;
+
+                    % Take inverse fft to get the notched analog data
+                    analogDataFullNotched = ifft(analogDataFullfft);
+
+                    % Segment and store the notched data
+                    clear analogDataNotched
+
+                    analogDataNotched = zeros(totalStim,numSamples);
+                    for j=1:totalStim
+                        analogDataNotched(j,:) = analogDataFullNotched((goodStimPos(j)+1):(goodStimPos(j)+ numSamples));
+                    end
+                    save(fullfile(outputFolder,['elec' num2str(electrodesStored(i)) '.mat']),'analogData', 'analogDataFull', 'analogDataFullNotched', 'analogDataNotched','analogInfo');
+                else
+                    %------------------------------------
+                    save(fullfile(outputFolder,['elec' num2str(electrodesStored(i)) '.mat']),'analogData','analogInfo');
+                end
             end
         end
     end
@@ -217,7 +267,56 @@ if getLFP && (cAnalog>0)
                 [~, ~, analogData(j,:)] = ns_GetAnalogData(hFile, ...
                     analogInputListIDs(i), goodStimPos(j)+1, numSamples);
             end
-            save(fullfile(outputFolder,['ainp' num2str(analogInputNums(i)) '.mat']),'analogData','analogInfo');
+            
+            % [Vinay] - notch Line noise and harmonics if required ---
+            if notchLineNoise
+                disp('****Notching Line Noise and its harmonics****');
+                clear analogDataFull
+                [~, ~, analogDataFull] = ns_GetAnalogData(hFile, ...
+                        analogInputListIDs(i), 1, goodStimPos(j)+1+numSamples); % Get the full length analogData
+                % j is at the last stim
+
+                clear analogDataFullNotched
+
+                Fs = analogInfo.SampleRate; % sampling rate
+                N = length(analogDataFull); % length of the full length analog data
+
+                F = Fs/N*(0:N-1); % Span of frequencies to be considered
+                F = F';
+
+                clear notchRange
+                notchRange{1} = find(F>48 & F<52); % 50 Hz line noise            
+                notchRange{2} = find(F>98 & F<102); % 1st harmonic
+                notchRange{3} = find(F>148 & F<152); % 2nd harmonic
+
+                notchRange{4} = find(F>(Fs-52) & F<(Fs-48));
+                notchRange{5} = find(F>(Fs-102) & F<(Fs-98));
+                notchRange{6} = find(F>(Fs-152) & F<(Fs-148));
+
+                % Take FFT and notch it!
+                analogDataFullfft = fft(analogDataFull);
+                analogDataFullfft(notchRange{1}) = 0;
+                analogDataFullfft(notchRange{2}) = 0;
+                analogDataFullfft(notchRange{3}) = 0;
+                analogDataFullfft(notchRange{4}) = 0;
+                analogDataFullfft(notchRange{5}) = 0;
+                analogDataFullfft(notchRange{6}) = 0;
+
+                % Take inverse fft to get the notched analog data
+                analogDataFullNotched = ifft(analogDataFullfft);
+
+                % Segment and store the notched data
+                clear analogDataNotched
+
+                analogDataNotched = zeros(totalStim,numSamples);
+                for j=1:totalStim
+                    analogDataNotched(j,:) = analogDataFullNotched((goodStimPos(j)+1):(goodStimPos(j)+ numSamples));
+                end
+                save([outputFolder 'ainp' num2str(analogInputNums(i))],'analogData', 'analogDataFull', 'analogDataFullNotched', 'analogDataNotched','analogInfo');
+            else
+                %-----------------------------
+                save(fullfile(outputFolder,['ainp' num2str(analogInputNums(i)) '.mat']),'analogData','analogInfo');
+            end
         end
     end
 
