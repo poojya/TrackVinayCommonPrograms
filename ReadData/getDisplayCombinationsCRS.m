@@ -270,7 +270,7 @@ for gaborNum = 1:3
 end
 
     % save
-    save([folderOut 'parameterCombinations.mat'],'parameters','parameterCombinations', ...
+    save(fullfile(folderOut,'parameterCombinations.mat'),'parameters','parameterCombinations', ...
         'aValsUnique','eValsUnique','sValsUnique','fValsUnique','oValsUnique','cValsUnique','tValsUnique','pValsUnique','rValsUnique'); % [Vinay] - added additional parameters p and r for CRS
 
 end

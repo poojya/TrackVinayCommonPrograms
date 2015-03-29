@@ -312,7 +312,7 @@ if getLFP && (cAnalog>0)
                 for j=1:totalStim
                     analogDataNotched(j,:) = analogDataFullNotched((goodStimPos(j)+1):(goodStimPos(j)+ numSamples));
                 end
-                save([outputFolder 'ainp' num2str(analogInputNums(i))],'analogData', 'analogDataFull', 'analogDataFullNotched', 'analogDataNotched','analogInfo');
+                save(fullfile(outputFolder,['ainp' num2str(analogInputNums(i)) '.mat']),'analogData', 'analogDataFull', 'analogDataFullNotched', 'analogDataNotched','analogInfo');
             else
                 %-----------------------------
                 save(fullfile(outputFolder,['ainp' num2str(analogInputNums(i)) '.mat']),'analogData','analogInfo');

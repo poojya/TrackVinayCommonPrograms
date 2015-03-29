@@ -267,7 +267,7 @@ for i=1:numTrials
         elseif stimResults.side==2
             stimResults.stimOnFrame(pos+1:pos+numStims(i)) = ...
                 (mapping2Times(pos+1:pos+numStims(i)) - mapping2Times(pos+1))*frameRate;
-        elseif stimResults.side==[1 2]
+        elseif min(stimResults.side)==1 % [1 2] case
             stimResults.stimOnFrame(pos+1:pos+numStims(i)) = ...
                 (mapping1Times(pos+1:pos+numStims(i)) - mapping1Times(pos+1))*frameRate;
         else % for all other cases gabor0 is drawn, so take its times i.e. for [0 1], [0 2], [0 1 2]

@@ -1202,7 +1202,7 @@ tfplotHandles = getPlotHandles(numRows,numCols,tfgridPos,gap);
                    set(hParam1,'val',5); % 5 => SF
                    set(hParam2,'val',6); % 6 => ori
                    set(hParam3,'val',7); % 7 => cont
-                   set(hParam4,'val',8); % 8 => TF 
+                   set(hParam4,'val',9); % 9 => rad 
                    set(hParam5,'val',7); % 7 => cont (Ring) 
                    set(hParam6,'val',9); % 9 => rad
                    set(hParam7,'val',1); % 1 => NA
@@ -1218,7 +1218,7 @@ tfplotHandles = getPlotHandles(numRows,numCols,tfgridPos,gap);
                    set(hParam1,'val',5); % 5 => SF
                    set(hParam2,'val',6); % 6 => ori
                    set(hParam3,'val',7); % 7 => cont
-                   set(hParam4,'val',8); % 8 => TF 
+                   set(hParam4,'val',9); % 9 => rad 
                    set(hParam5,'val',6); % 6 => ori (Ring) 
                    set(hParam6,'val',9); % 9 => rad
                    set(hParam7,'val',1); % 1 => NA
@@ -1234,7 +1234,7 @@ tfplotHandles = getPlotHandles(numRows,numCols,tfgridPos,gap);
                    set(hParam1,'val',5); % 5 => SF
                    set(hParam2,'val',6); % 6 => ori
                    set(hParam3,'val',7); % 7 => cont
-                   set(hParam4,'val',8); % 8 => TF 
+                   set(hParam4,'val',9); % 9 => rad 
                    set(hParam5,'val',10); % 10 => phase (Ring) 
                    set(hParam6,'val',9); % 9 => rad
                    set(hParam7,'val',1); % 1 => NA
@@ -1280,7 +1280,7 @@ tfplotHandles = getPlotHandles(numRows,numCols,tfgridPos,gap);
                    set(hGabor7,'val',1); % 1 => NA
                    
                    set(hParam1,'val',5); % 5 => SF
-                   set(hParam2,'val',6); % 6 => ori
+                   set(hParam2,'val',9); % 9 => rad
                    set(hParam3,'val',7); % 7 => cont
                    set(hParam4,'val',8); % 8 => TF 
                    set(hParam5,'val',8); % 8 => TF (Ring) 
@@ -1303,19 +1303,19 @@ tfplotHandles = getPlotHandles(numRows,numCols,tfgridPos,gap);
                    set(hParam6,'val',9); % 9 => rad (Ring)
                    set(hParam7,'val',1); % 1 => NA
                case 10 %Annulus Fixed Protocol
-                   set(hGabor1,'val',2);% 2 => C
-                   set(hGabor2,'val',2);
-                   set(hGabor3,'val',2);
-                   set(hGabor4,'val',2);
-                   set(hGabor5,'val',2);
-                   set(hGabor6,'val',3); % 3 => R
+                   set(hGabor1,'val',4);% 4 => S
+                   set(hGabor2,'val',4);
+                   set(hGabor3,'val',4);
+                   set(hGabor4,'val',4);
+                   set(hGabor5,'val',3); % 3 => R
+                   set(hGabor6,'val',3);
                    set(hGabor7,'val',1); % 1 => NA
                    
                    set(hParam1,'val',5); % 5 => SF
                    set(hParam2,'val',6); % 6 => ori
                    set(hParam3,'val',7); % 7 => cont
-                   set(hParam4,'val',8); % 8 => TF 
-                   set(hParam5,'val',9); % 9 => rad 
+                   set(hParam4,'val',9); % 9 => rad 
+                   set(hParam5,'val',7); % 7 => cont (Ring) 
                    set(hParam6,'val',9); % 9 => rad (Ring)
                    set(hParam7,'val',1); % 1 => NA
                otherwise
