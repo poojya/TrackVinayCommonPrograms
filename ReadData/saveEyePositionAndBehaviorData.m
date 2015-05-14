@@ -406,8 +406,17 @@ for i=1:numTrials
 %                 eXshort = eX(stimOnsetPos+list);
 %                 eYshort = eY(stimOnsetPos+list);
                 
-                eXshort = eX(stimOnsetPos+list-shiftList);
-                eYshort = eY(stimOnsetPos+list-shiftList);
+%                 eXshort = eX(stimOnsetPos+list-shiftList);
+%                 eYshort = eY(stimOnsetPos+list-shiftList);
+                
+                listLen = length(list);
+                list(end:-1:end-shiftList+1) = []; % to read only till the end of eX or eY and not exceed their indices
+                eXshort = eX(stimOnsetPos+list);
+                eYshort = eY(stimOnsetPos+list);
+                % append zeros to these if they are not of length=listLen,
+                % else there is index mismatch
+                eXshort(end+1:listLen) = 0;
+                eYshort(end+1:listLen) = 0;
 
                 eXshortDeg = cal.m11*eXshort + cal.m21 * eYshort + cal.tX;
                 eYshortDeg = cal.m12*eXshort + cal.m22 * eYshort + cal.tY;

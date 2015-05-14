@@ -320,9 +320,10 @@ uicontrol('Parent',hPlotOptionsPanel,'Unit','Normalized', ...
 % Get plots and message handles
 
 % Get electrode array information
+gridLayout = 1; % 64 electrodes
 electrodeGridPos = [staticStartPos panelStartHeight staticPanelWidth panelHeight];
 hElectrodes = showElectrodeLocations(electrodeGridPos,analogChannelsStored(get(hAnalogChannel,'val')), ...
-    colorNames(get(hChooseColor,'val')),[],1,0,gridType);
+    colorNames(get(hChooseColor,'val')),[],1,0,gridType,subjectName,gridLayout);
 
 % Make plot for RFMap, centerRFMap and main Map
 if length(aValsUnique)>=5
@@ -481,7 +482,7 @@ hSigmaPlot        = getPlotHandles(1,length(sValsUnique),sigmaGrid,0.002);
         rescaleData(hOrientationPlot,xMin,xMax,getYLims(hOrientationPlot));
         rescaleData(hSpatialFreqPlot,xMin,xMax,getYLims(hSpatialFreqPlot));
         rescaleData(hSigmaPlot,xMin,xMax,getYLims(hSigmaPlot));
-        showElectrodeLocations(electrodeGridPos,channelNumber,plotColor,hElectrodes,holdOnState,0,gridType);
+        showElectrodeLocations(electrodeGridPos,channelNumber,plotColor,hElectrodes,holdOnState,0,gridType,subjectName,gridLayout);
     end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     function rescaleY_Callback(~,~)

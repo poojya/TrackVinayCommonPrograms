@@ -23,7 +23,7 @@
 % The mode depends on the specific protocol used (which is coded and sent
 % in a variable Digital code - 'protocolNumber'. This can be read and used 
 % to reconstruct the stimulus parameter values from the sent non-redundant
-% Digital Codes
+% Digital Codes)
 
 function [goodStimNums,goodStimTimes,side] = extractDigitalDataCRS(folderExtract,ignoreTargetStimFlag,frameRate)
 
@@ -110,15 +110,15 @@ stimResults.protocolNumber = convertUnits([digitalCodeInfo(find(convertStrCodeTo
 % three gabors they will be ordered as - [g0 g1 g2 g0 g1 g2 ...], if only
 % the ring (g1) and centre (g2) values are sent then they would be - [g1 g2
 % g1 g2 ...], if only surround values are sent it would be - [g1 g1 g1 ...]
-% and so on. We take the values that are sent and repeat/arrange them so
-% that so as to fill the values for all gabors before storing them.
+% and so on. We take the values that are sent and repeat/arrange them
+% so as to fill the values for all gabors before storing them.
 % For eg. in Ring protocol all values for S (gabor0) are sent and only the
 % 'radius' values are sent for R and C. Therefore radius values will be
 % ordered as [g0 g1 g2 g0 g1 g2 ..] whereas all others are [g0 g0 g0 ..].
 % Hence, radius remains unchanged, while for others the values sent for g0
 % are repeated for g1 and g2 and the new parameter matrix obtained. For
-% contrast, g0 values are repeated only for g2 where g1 is assigned a value
-% of 0 because Ring is always shown at 0% contrast in Ring Protocol.
+% contrast, g0 values are repeated only for g2 whereas g1 is assigned a 
+% value of 0 because Ring is always shown at 0% contrast in Ring Protocol.
 % Similar procedure used for other protocols as per the specifics of each
 % protocol
 % NOTE: All digital codes are sent for protocolNumber 0 (noneProtocol), 9
