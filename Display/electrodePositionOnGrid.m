@@ -4,6 +4,7 @@ if ~exist('subjectName','var');         subjectName=[];                 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EEG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if strcmpi(gridType,'EEG')
+    
     if gridLayout == 1 % EasyCap 64 electrodes
         
         electrodeArray = ...
@@ -83,7 +84,6 @@ if strcmpi(gridType,'Microelectrode')
             79 80 84 86 87 89 91 94 63 95;
             00 81 83 85 88 90 92 93 96 00];
         
-        
     elseif strcmp(subjectName,'alpa')
         
         electrodeArray = ...
@@ -98,7 +98,7 @@ if strcmpi(gridType,'Microelectrode')
             89 80 70 60 50 40 30 20 10 01;
             00 79 69 59 49 39 29 19 09 00];
     end
-        
+
     if electrodeNum<1 || electrodeNum>96
         disp('Electrode Number out of range');
         row=1;column=1;
