@@ -84,7 +84,7 @@ if strcmpi(gridType,'Microelectrode')
             00 81 83 85 88 90 92 93 96 00];
         
         
-    elseif strcmp(subjectName,'alpa')
+        elseif strcmp(subjectName,'alpa')
         
         electrodeArray = ...
            [00 88 78 68 58 48 38 28 18 00;
@@ -99,13 +99,13 @@ if strcmpi(gridType,'Microelectrode')
             00 79 69 59 49 39 29 19 09 00];
     end
         
-    if electrodeNum<1 || electrodeNum>96
-        disp('Electrode Number out of range');
-        row=1;column=1;
-    else
-        [row,column] = find(electrodeArray==electrodeNum);
+        if electrodeNum<1 || electrodeNum>96
+            disp('Electrode Number out of range');
+            row=1;column=1;
+        else
+            [row,column] = find(electrodeArray==electrodeNum);
+        end
     end
-    
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ECoG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
