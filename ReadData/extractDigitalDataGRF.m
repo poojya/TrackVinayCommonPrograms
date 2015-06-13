@@ -137,6 +137,29 @@ eotCodes = convertUnits([digitalCodeInfo(find(convertStrCodeToDec('TE')==allDigi
 forceQuits = find(eotCodes==kForceQuit);
 numForceQuits = length(forceQuits);
 
+% Vinay - it seems that when the task is stopped it gives an extra trialEnd
+% code. Have to snub this, else it gives an error.
+trialEndError = 0; % initialize
+if ((length(trialResults(2).times) - length(trialResults(1).times)) == 1)
+    trialResults(2).times(length(trialResults(2).times)) = [];
+    trialResults(2).value(length(trialResults(2).times)) = [];
+    trialEndError = 1;
+end
+
+% [Vinay] - if the final code of 'eotCodes' is 5 (False Alarm/quit) then it
+% might be because of the stipulated blocks getting exhausted and the
+% experiment stopping as a result of that. Check for this condition and if
+% it is found to be so then truncate the last eotCode and trialCertify.
+% Also, it seems that when the task is stopped it gives an extra trialEnd
+% code if the blocks are not exhausted. So the last eotCodes and
+% trialCertify have to be dropped. This has been taken care of in the
+% trialResults reading code earlier and the trialEndError indicates if this
+% error occured or not
+if ((eotCodes(length(eotCodes))==5) || (trialEndError == 1))
+    eotCodes(length(eotCodes)) = [];
+    trialCertify(length(eotCodes)) = [];
+end
+
 if length(eotCodes)-numForceQuits == numTrials
     disp(['numTrials: ' num2str(numTrials) ' numEotCodes: '  ...
         num2str(length(eotCodes)) ', ForceQuits: ' num2str(numForceQuits)]);
@@ -148,6 +171,18 @@ else
         num2str(length(eotCodes)) ', forcequits: ' num2str(numForceQuits)]);
     error('ForceQuit pressed after trial started'); % TODO - deal with this case
 end
+
+% if length(eotCodes)-numForceQuits == numTrials
+%     disp(['numTrials: ' num2str(numTrials) ' numEotCodes: '  ...
+%         num2str(length(eotCodes)) ', ForceQuits: ' num2str(numForceQuits)]);
+%     goodEOTPos = find(eotCodes ~=kForceQuit);
+%     eotCodes = eotCodes(goodEOTPos);
+%     trialCertify = trialCertify(goodEOTPos);
+% else
+%      disp(['numTrials: ' num2str(numTrials) ' numEotCodes: '  ...
+%         num2str(length(eotCodes)) ', forcequits: ' num2str(numForceQuits)]);
+%     error('ForceQuit pressed after trial started'); % TODO - deal with this case
+% end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 numStimTask  = getStimPosPerTrial(trialStartTimes, taskGaborTimes);

@@ -326,6 +326,9 @@ if getLFP && (cAnalog>0)
         electrodesStored = 0;
     end
     analogChannelsStored = electrodesStored; %#ok<NASGU>
+    if ~exist('analogInputNums','var') % Vinay - if no analog channels are stored
+        analogInputNums = [];
+    end
     save(fullfile(outputFolder,'lfpInfo.mat'),'analogChannelsStored','electrodesStored','analogInputNums','goodStimPos','timeVals');
 end
 
