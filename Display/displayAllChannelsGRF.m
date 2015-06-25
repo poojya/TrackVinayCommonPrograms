@@ -1,7 +1,7 @@
 % Display All Channels
 function displayAllChannelsGRF(subjectName,expDate,protocolName,folderSourceString,gridType)
 
-if ~exist('folderSourceString','var');   folderSourceString='K:';       end
+if ~exist('folderSourceString','var');   folderSourceString='E:';       end
 if ~exist('gridType','var');             gridType='EEG';                end
 
 folderName = fullfile(folderSourceString,'data',subjectName,gridType,expDate,protocolName);
@@ -310,7 +310,7 @@ hElectrodes = showElectrodeLocations(electrodeGridPos,highImpChannels,'m',[],0,0
 if strcmpi(gridType,'ECoG')
     plotHandles = getPlotHandles(8,10);
 else
-    plotHandles = getPlotHandles(10,11);
+    plotHandles = getPlotHandles(10,10);
 end
 
 hMessage = uicontrol('Unit','Normalized','Position',[0 0.975 1 0.025],...
@@ -480,7 +480,7 @@ else
         disp(['Plotting electrode ' num2str(channelNum)]);
 
         % get position
-        [row,column] = electrodePositionOnGrid(channelNum,gridType,[],1);
+        [row,column] = electrodePositionOnGrid(channelNum,gridType);
 
         if analysisType == 1        % compute ERP
             clear signal analogData
@@ -497,7 +497,7 @@ else
             disp('Use plotSpikeData instead of plotLFPData...');
         else
             clear signal analogData
-            load(fullfile(folderData,['elec' num2str(channelNum) '.mat']));
+            load([folderData 'elec' num2str(channelNum)]);
             if removeAvgRef
                 analogData = analogData-avgRef;
             end
@@ -547,8 +547,8 @@ else
         [row,column] = electrodePositionOnGrid(channelNum,gridType);
 
         clear neuralInfo spikeData
-        load([folderData 'elec' num2str(channelNum) '_SID' num2str(SourceUnitID(i))]);
-        [psthVals,xs] = getPSTH(spikeData(goodPos),binWidthMS,timeVals);
+        load(fullfile(folderData,['elec' num2str(channelNum) '_SID' num2str(SourceUnitID(i))]));
+        [psthVals,xs] = getPSTH(spikeData(goodPos),binWidthMS,[timeVals(1) timeVals(end)]);
         
         % Compute the mean firing rates
         blPos = find(xs>=blRange(1),1)+ (1:(diff(blRange))/(binWidthMS/1000));
@@ -589,7 +589,7 @@ yMax = -inf;
 for i=1:length(channelsStored)
     channelNum = channelsStored(i);
     % get position
-    [row,column] = electrodePositionOnGrid(channelNum,gridType,[],1);
+    [row,column] = electrodePositionOnGrid(channelNum,gridType);
     
     axis(plotHandles(row,column),'tight');
     tmpAxisVals = axis(plotHandles(row,column));
@@ -610,7 +610,7 @@ for i=1:length(channelsStored)
     channelNum = channelsStored(i);
     
     % get position
-   [row,column] = electrodePositionOnGrid(channelNum,gridType,[],1);
+   [row,column] = electrodePositionOnGrid(channelNum,gridType);
     
     axis(plotHandles(row,column),axisLims);
     if (row==numRows && rem(column,2)==1)

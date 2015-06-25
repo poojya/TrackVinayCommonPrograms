@@ -398,6 +398,7 @@ stimResults.time2 = [digitalCodeInfo(find(convertStrCodeToDec('M2')==allDigitalC
 nonInstructionTrials = find(instructionTrials==0);
 if (max(abs(numStimTask(nonInstructionTrials) - numStimMap0(nonInstructionTrials)))==0)
     disp('Mapping0 and Task times are the same');
+    numStimTask=numStimMap0;
     numStims = numStimMap0;
     stimResults.time = [digitalCodeInfo(find(convertStrCodeToDec('M0')==allDigitalCodesInDec)).time]';
     % stimResults.side = 0;
@@ -472,7 +473,10 @@ end
 posTask = 0;
 pos=0;
 for i=1:numTrials
-    taskTypeThisTrial = taskType(posTask+1:posTask+numStimTask(i));
+    taskTypeThisTrial = taskType(posTask+1:posTask+numStims(i)); 
+    % [Vinay] - numStimTask works here only if there are no instruction 
+    % trials, otherwise numStims contains the number of stimuli in each 
+    % trial and works for all cases
     if (numStims(i)>0)
         stimResults.type(pos+1:pos+numStims(i)) = taskTypeThisTrial;
         stimResults.trialNumber(pos+1:pos+numStims(i)) = i;
@@ -501,7 +505,7 @@ for i=1:numTrials
         stimResults.trialCertify(pos+1:pos+numStims(i)) = trialCertify(i);
         pos = pos+numStims(i);
     end
-    posTask = posTask+numStimTask(i);
+    posTask = posTask+numStims(i);
 end
 
 % Save in folderOut

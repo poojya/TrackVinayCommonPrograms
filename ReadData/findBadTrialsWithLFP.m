@@ -3,7 +3,7 @@
 % 2. maxLimit
 % If yes, that trial is marked as a bad trial
 
-function [allBadTrials,badTrials] = findBadTrialsWithLFP(monkeyName,expDate,protocolName,folderSourceString,gridType,checkTheseElectrodes,threshold,maxLimit,showElectrodes,minLimit,saveDataFlag)
+function [allBadTrials,badTrials] = findBadTrialsWithLFP(monkeyName,expDate,protocolName,folderSourceString,gridType,checkTheseElectrodes,threshold,maxLimit,showElectrodes,minLimit,saveDataFlag,checkPeriod)
 
 if ~exist('checkTheseElectrodes','var');     checkTheseElectrodes = [33 12 80 63 44];   end
 if ~exist('folderSourceString','var');       folderSourceString = 'G:';                 end
@@ -52,7 +52,7 @@ end
 
 if saveDataFlag
     disp(['Saving ' num2str(length(badTrials)) ' bad trials']);
-    save([folderSegment 'badTrials.mat'],'badTrials','checkTheseElectrodes','threshold','maxLimit');
+    save(fullfile(folderSegment,'badTrials.mat'),'badTrials','checkTheseElectrodes','threshold','maxLimit');
 else
     disp('Bad trials will not be saved..');
 end

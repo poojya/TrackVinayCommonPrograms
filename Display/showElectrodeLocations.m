@@ -3,10 +3,13 @@ function plotHandle = showElectrodeLocations(gridPosition,highlightElectrodes,co
 if ~exist('subjectName','var');          subjectName=[];                end
 if ~exist('hideElectrodeNums','var');    hideElectrodeNums=0;           end
 if ~exist('gridType','var');             gridType = 'Microelectrode';   end
+if ~exist('gridLayout','var');             gridLayout = 1;              end
 
 if strcmpi(gridType,'ECoG')
     numRows=8;numCols=10;
-else 
+elseif strcmpi(gridType,'Microelectrode')
+    numRows=10;numCols=10;
+else
     numRows=10;numCols=11;
 end
 

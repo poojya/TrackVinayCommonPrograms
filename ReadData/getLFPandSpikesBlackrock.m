@@ -107,7 +107,7 @@ electrodeCount = 0;
 ainpCount = 0;
 
 for i=1:cAnalog
-    if strcmp(analogLabels(i,1:4),'chan')
+    if strcmp(analogLabels(i,1:4),'elec')
         electrodeCount = electrodeCount+1;
         electrodeNums(electrodeCount) = str2num(analogLabels(i,5:end)); %#ok<*AGROW,*ST2NM>
         electrodeListIDs(electrodeCount,:) = analogList(i);
@@ -341,7 +341,7 @@ if electrodeCount ~= 0
         % The optional input digitalChannelsToStore contains the list of channels that
         % should be recorded
         clear neuralListIDs neuralChannelsStored
-        if ~exist('neuralChannelsToStore','var')
+        if isempty(neuralChannelsToStore)
             disp('Neural electrode list not given, taking all available electrodes.');
             neuralChannelsToStore = unique(neuralChannelNums);
         end
@@ -371,7 +371,10 @@ if electrodeCount ~= 0
         disp([num2str(cNeuralListIDs) ' neurons obtained']);
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-       
+        % Prepare folders
+        folderOut = fullfile(folderName,'segmentedData');
+        makeDirectory(folderOut); % main directory to store both LFP and spikes
+    
         % Make Diectory for storing Spike data
         outputFolder = fullfile(folderOut,'Spikes');
         makeDirectory(outputFolder);
@@ -443,6 +446,8 @@ if electrodeCount ~= 0
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Prepare folders
+        folderOut = fullfile(folderName,'segmentedData');
+        makeDirectory(folderOut); % main directory to store both LFP and spikes
         
         outputFolder = fullfile(folderOut,'Segments');
         makeDirectory(outputFolder);
