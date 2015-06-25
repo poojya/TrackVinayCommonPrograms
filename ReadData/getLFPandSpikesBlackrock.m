@@ -343,7 +343,7 @@ if electrodeCount ~= 0
         clear neuralListIDs neuralChannelsStored
         if isempty(neuralChannelsToStore)
             disp('Neural electrode list not given, taking all available electrodes.');
-            neuralChannelsToStore = unique(neuralChannelNums);
+            neuralChannelsToStore = neuralChannelNums;
         end
 
         disp(['Spikes from the specified ' num2str(length(neuralChannelsToStore)) ' electrodes will be stored.']);
@@ -371,7 +371,9 @@ if electrodeCount ~= 0
         disp([num2str(cNeuralListIDs) ' neurons obtained']);
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Prepare folders
+
+       % Prepare folders
+       
         folderOut = fullfile(folderName,'segmentedData');
         makeDirectory(folderOut); % main directory to store both LFP and spikes
     
@@ -420,7 +422,7 @@ if electrodeCount ~= 0
         % The optional input segmentChannelsToStore contains the list of channels that
         % should be recorded
         clear segmentListIDs segmentChannelsStored
-        if ~exist('segmentChannelsToStore','var')
+        if isempty(segmentChannelsToStore)
             disp('Segment list not given, taking all available electrodes.');
             segmentChannelsToStore = unique(segmentChannelNums);
         end

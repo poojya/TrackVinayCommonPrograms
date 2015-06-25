@@ -58,7 +58,9 @@ if ~isempty(highlightElectrodes)
         end
     end
 else
+    
     [~,~,electrodeArray] = electrodePositionOnGrid(1,gridType,subjectName,1);
+    
 end
 
 % Write electrode numbers

@@ -13,7 +13,15 @@
 
 %timePeriodPos is changed to 3, and pooling option = 1, in accordance to
 %new approach used for RF estimation
-function displayReceptiveFields(subjectName,expDates,protocolNames,folderSourceString,gridType,axisLims,aziCenters,eleCenters)
+
+% Also added options to read filtered data. Filtering is done in
+% getValuesForRFEstimation - here we simply load this data.
+
+function displayReceptiveFields(subjectName,expDates,protocolNames,folderSourceString,gridType,axisLims,aziCenters,eleCenters,filterStr,rfMeasureForLFP,poolingOption)
+
+if ~exist('filterStr','var');            filterStr = '';                end
+if ~exist('rfMeasureForLFP','var');      rfMeasureForLFP = 'RMS';       end
+if ~exist('poolingOption','var');        poolingOption = 1;             end
 
 numberOfDays = length(expDates);
 timePeriodPos=3; % 40 to 100 ms after baseline subtraction [BL: -100 -40] 
@@ -44,10 +52,11 @@ hRFPlotFR   = subplot('Position',[0.35 0.8 0.125 0.1],'YTickLabel',[]);%,'XTickL
 hMaxValPlotFR  = subplot('Position',[0.35 0.71 0.125 0.06],'YAxisLocation','right');
 hMeansFR    = subplot('Position',[0.35 0.45 0.125 0.24],'XTickLabel',[],'YTickLabel',[],'box','on');
 
-[~,aValsUnique,eValsUnique] = loadRFParams(subjectName,expDates{1},protocolNames{1},folderSourceString,gridType,'LFP');
+[~,aValsUnique,eValsUnique] = loadRFParams(subjectName,expDates{1},protocolNames{1},folderSourceString,gridType,'LFP',filterStr,rfMeasureForLFP,poolingOption);
+
 numAzi=length(aValsUnique);
 numEle=length(eValsUnique);
-%numAzi=11; numEle=11;
+
 numRows=numEle;numCols=numAzi;
 hERPPlots = getPlotHandles(numRows,numCols,[0.525 0.5 0.425 0.4],0,0);
 hFRPlots   = getPlotHandles(numRows,numCols,[0.525 0.05 0.425 0.4],0,0);
@@ -59,7 +68,8 @@ hERPAndFRPlots{2} = hFRPlots;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Controls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[elecList,electrodeString]=getElectrodeList(subjectName,expDates{1},protocolNames{1},folderSourceString,gridType);
+[electrodeList,electrodeString]=getElectrodeList(subjectName,expDates{1},protocolNames{1},folderSourceString,gridType);
+
 hElectrodeNum = uicontrol('Unit','Normalized', 'Position',[0.05 0.9 0.075 0.1], ...
     'Style','popup','String',electrodeString,'FontSize',fontSizeSmall);
 
@@ -278,7 +288,8 @@ hFRMax = uicontrol('Parent',hTimingPanel,'Unit','Normalized', ...
             useTheseProtocolNames = protocolNames;
         end
         
-        analyzeAllElectrodes(hRMSPlot,hFRPlot,hGridPlot,hRFPlotLFPAllElectrodes,subjectName,useTheseExpDates,useTheseProtocolNames,folderSourceString,gridType,timePeriodPos,rmsThreshold,axisLims);
+        analyzeAllElectrodes(hRMSPlot,hFRPlot,hGridPlot,hRFPlotLFPAllElectrodes,subjectName,useTheseExpDates,useTheseProtocolNames,folderSourceString,gridType,timePeriodPos,rmsThreshold,axisLims,filterStr,rfMeasureForLFP,poolingOption);
+        
         cRMS = caxis(hRMSPlot); set(hRMSMin,'String',num2str(cRMS(1))); set(hRMSMax,'String',num2str(cRMS(2)));
         cFR = caxis(hFRPlot); set(hFRMin,'String',num2str(cFR(1))); set(hFRMax,'String',num2str(cFR(2)));
     end
@@ -301,7 +312,9 @@ hFRMax = uicontrol('Parent',hTimingPanel,'Unit','Normalized', ...
             protocolName = protocolNames{i};
             
             % Get LFP Data
-            allParamsLFP = loadRFParams(subjectName,expDate,protocolName,folderSourceString,gridType,'LFP');
+
+            allParamsLFP = loadRFParams(subjectName,expDate,protocolName,folderSourceString,gridType,'LFP',filterStr,rfMeasureForLFP,poolingOption);
+            
             paramsLFP = allParamsLFP{electrodeNum,timePeriodPos};
             [~,~,boundaryXLFP,boundaryYLFP] = gauss2D(paramsLFP);
             
@@ -313,28 +326,37 @@ hFRMax = uicontrol('Parent',hTimingPanel,'Unit','Normalized', ...
             scalingFactorLFP(i) = paramsLFP(6);
             plot(hRFPlotLFP,aziListLFP(i),eleListLFP(i),'color',posColors(i,:),'Marker','*');
             plot(hRFPlotLFP,boundaryXLFP,boundaryYLFP,'color',posColors(i,:));
+
+            [~,~,rfValsMaxLFP] = loadRMSAndMaxValues(subjectName,expDate,protocolName,folderSourceString,gridType,'LFP',filterStr,rfMeasureForLFP);
             
-            [~,~,rfValsMaxLFP] = loadRMSAndMaxValues(subjectName,expDate,protocolName,folderSourceString,gridType,'LFP');
             maxValLFP(i) = max(max(squeeze(rfValsMaxLFP(:,:,electrodeNum,timePeriodPos))));
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %%%% Get Spike Data
-            allParamsFR = loadRFParams(subjectName,expDate,protocolName,folderSourceString,gridType,'Spikes');
+
+            allParamsFR = loadRFParams(subjectName,expDate,protocolName,folderSourceString,gridType,'Spikes',filterStr,rfMeasureForLFP,poolingOption);
+            
             paramsFR = allParamsFR{electrodeNum,timePeriodPos};
-            [~,~,boundaryXFR,boundaryYFR] = gauss2D(paramsFR);
+
+            if isempty(paramsFR)
+                disp(['Spike electrode ' num2str(electrodeNum) ' does not exist']);
+            else
+                [~,~,boundaryXFR,boundaryYFR] = gauss2D(paramsFR);
+                
+                % Azi and Ele list
+                aziListFR(i) = paramsFR(1);
+                eleListFR(i) = paramsFR(2);
+                sigXFR(i) = paramsFR(3);
+                sigYFR(i) = paramsFR(4);
+                scalingFactorFR(i) = paramsFR(6);
+                plot(hRFPlotFR,aziListFR(i),eleListFR(i),'color',posColors(i,:),'Marker','*');
+                plot(hRFPlotFR,boundaryXFR,boundaryYFR,'color',posColors(i,:));
+                
+                % Get Spike Data
+                [~,~,rfValsMaxFR] = loadRMSAndMaxValues(subjectName,expDate,protocolName,folderSourceString,gridType,'Spikes',filterStr,rfMeasureForLFP);
+                maxValFR(i) = max(max(squeeze(rfValsMaxFR(:,:,electrodeNum,timePeriodPos))));
+            end
             
-            % Azi and Ele list
-            aziListFR(i) = paramsFR(1); 
-            eleListFR(i) = paramsFR(2);
-            sigXFR(i) = paramsFR(3);
-            sigYFR(i) = paramsFR(4);
-            scalingFactorFR(i) = paramsFR(6);
-            plot(hRFPlotFR,aziListFR(i),eleListFR(i),'color',posColors(i,:),'Marker','*');
-            plot(hRFPlotFR,boundaryXFR,boundaryYFR,'color',posColors(i,:));
-            
-            % Get Spike Data
-            [~,~,rfValsMaxFR] = loadRMSAndMaxValues(subjectName,expDate,protocolName,folderSourceString,gridType,'Spikes');
-            maxValFR(i) = max(max(squeeze(rfValsMaxFR(:,:,electrodeNum,timePeriodPos))));
         end
         
         axis(hRFPlotLFP,axisLims); axis(hRFPlotFR,axisLims);
@@ -371,7 +393,9 @@ hFRMax = uicontrol('Parent',hTimingPanel,'Unit','Normalized', ...
             maxValLFPToUse = ones(1,length(maxValLFPToUse)); %#ok<UNRCH>
             maxValFRToUse = ones(1,length(maxValFRToUse));
         end
-        plotERPAndFRDataNew(hERPAndFRPlots,subjectName,expDatesToUse,protocolNamesToUse,folderSourceString,gridType,electrodeNum,numRows,numCols,posColors(dayNum,:),timeLims,maxValLFPToUse,maxValFRToUse);
+
+        plotERPAndFRDataNew(hERPAndFRPlots,subjectName,expDatesToUse,protocolNamesToUse,folderSourceString,gridType,electrodeNum,numRows,numCols,posColors(dayNum,:),timeLims,maxValLFPToUse,maxValFRToUse,filterStr);
+        
     end
     function cla_Callback(~,~)
         claGivenPlotHandle(hRFPlotLFP);claGivenPlotHandle(hRFPlotFR);
@@ -409,25 +433,43 @@ hFRMax = uicontrol('Parent',hTimingPanel,'Unit','Normalized', ...
     end
 end
 % Loading functions
-function [numStimuli,rfValsRMS,rfValsMax,rfValsPowerOrMean] = loadRMSAndMaxValues(subjectName,expDate,protocolName,folderSourceString,gridType,measure)
-load(fullfile(folderSourceString,'data',subjectName,gridType,expDate,protocolName,'RFMeasures', measure,'rfValues'));
+function [numStimuli,rfValsRMSorMin,rfValsMax,rfValsPowerOrMean] = loadRMSAndMaxValues(subjectName,expDate,protocolName,folderSourceString,gridType,measure,filterStr,rfMeasureForLFP,fileTag)
+
+if ~exist('fileTag','var');                 fileTag='';                 end
 
 if strcmp(measure,'LFP')
+    load(fullfile(folderSourceString,'data',subjectName,gridType,expDate,protocolName,'RFMeasures', measure,['rfValues' fileTag filterStr '.mat']));
     rfValsPowerOrMean = rfValsPower;
+    if strcmp(rfMeasureForLFP,'RMS')
+       rfValsRMSorMin = rfValsRMS;
+    elseif strcmp(rfMeasureForLFP,'Min')
+       rfValsRMSorMin = rfValsMin;
+    end
 elseif strcmp(measure,'Spikes')
+    load(fullfile(folderSourceString,'data',subjectName,gridType,expDate,protocolName,'RFMeasures', measure,'rfValues'));
     rfValsPowerOrMean = rfValsMean;
+    rfValsRMSorMin = rfValsRMS;
 end
 
 end
-function [params,aValsUnique,eValsUnique] = loadRFParams(subjectName,expDate,protocolName,folderSourceString,gridType,measure) %#ok<*STOUT>
-poolingOption=1; %% poolingOption change to 1 from 2
-load(fullfile(folderSourceString,'data',subjectName,gridType,expDate,protocolName,'RFMeasures', measure,['rfParams' num2str(poolingOption)])); % poolingOption
+
+function [params,aValsUnique,eValsUnique] = loadRFParams(subjectName,expDate,protocolName,folderSourceString,gridType,measure,filterStr,rfMeasureForLFP,poolingOption,fileTag) %#ok<*STOUT>
+
+if ~exist('fileTag','var');                 fileTag='';                 end
 
 if strcmp(measure,'LFP')
-    params = paramsRMSScaled; %paramsMaxScaled,paramsPowerScaled,paramsRMS,paramsMax,paramsPower
+    load(fullfile(folderSourceString,'data',subjectName,gridType,expDate,protocolName,'RFMeasures', measure,['rfParams' num2str(poolingOption) fileTag filterStr '.mat'])); % poolingOption
+    if strcmp(rfMeasureForLFP,'RMS')
+       params = paramsRMSScaled; %paramsMaxScaled,paramsPowerScaled,paramsRMS,paramsMax,paramsPower
+    elseif strcmp(rfMeasureForLFP,'Min')
+       params = paramsMinScaled;
+    end
+    
 elseif strcmp(measure,'Spikes')
+    load(fullfile(folderSourceString,'data',subjectName,gridType,expDate,protocolName,'RFMeasures', measure,['rfParams' num2str(poolingOption) fileTag '.mat'])); % poolingOption
     params = paramsRMSScaled;
 end
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Rescaling
@@ -555,7 +597,10 @@ text('Parent',hMeans,'String',num2str(grandMeanAzi),'Position',[0.2 1-(N+2.5)/(N
 text('Parent',hMeans,'String',num2str(grandMeanEle),'Position',[0.5 1-(N+2.5)/(N+3)],'HorizontalAlignment','center','Color','k');
 text('Parent',hMeans,'String',num2str(round(100*mean(rfSizeList))/100),'Position',[0.8 1-(N+2.5)/(N+3)],'HorizontalAlignment','center','Color','k');
 end
-function plotERPAndFRDataNew(hERPAndFRPlots,subjectName,expDatesToUse,protocolNamesToUse,folderSourceString,gridType,electrodeNum,numRows,numCols,plotColor,timeLims,maxValLFP,maxValFR)
+
+function plotERPAndFRDataNew(hERPAndFRPlots,subjectName,expDatesToUse,protocolNamesToUse,folderSourceString,gridType,electrodeNum,numRows,numCols,plotColor,timeLims,maxValLFP,maxValFR,filterStr,fileTag)
+
+if ~exist('fileTag','var');                 fileTag='';                 end
 
 numDays = length(expDatesToUse);
 spikeRateLimit=20;
@@ -596,7 +641,8 @@ for i=1:numDays
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    load(fullfile(folderSourceString,'data',subjectName,gridType,expDate,protocolName,'RFMeasures','LFP',['meanLFPDataChan' num2str(electrodeNum)]));
+    load(fullfile(folderSourceString,'data',subjectName,gridType,expDate,protocolName,'RFMeasures','LFP',['meanLFPDataChan' num2str(electrodeNum) fileTag filterStr '.mat']));
+    
     numStimuliLFP=numStimuli; clear numStimuli
     load(fullfile(folderSourceString,'data',subjectName,gridType,expDate,protocolName,'RFMeasures','Spikes',['meanSpikeDataChan' num2str(electrodeNum) '_SID0']));
     numStimuliFR=numStimuli;
@@ -665,16 +711,21 @@ end
 rescaleAxes(hERPPlots,[timeLims getYLims(hERPPlots)]); changeTickLabels(hERPPlots);
 rescaleAxes(hFRPlots,[timeLims getYLims(hFRPlots)]); changeTickLabels(hFRPlots);
 end
-function analyzeAllElectrodes(hRMSPlot,hFRPlot,hGridPlot,hRFPlotLFPAllElectrodes,subjectName,expDates,protocolNames,folderSourceString,gridType,timePeriodPos,rmsThreshold,axisLims)
-poolingOption=1; %% poolingOption changed to 1
+
+function analyzeAllElectrodes(hRMSPlot,hFRPlot,hGridPlot,hRFPlotLFPAllElectrodes,subjectName,expDates,protocolNames,folderSourceString,gridType,timePeriodPos,rmsThreshold,axisLims,filterStr,rfMeasureForLFP,poolingOption,fileTag)
+
+if ~exist('fileTag','var');                 fileTag='';                 end
+
 numDays = length(expDates);
 badElectrodes=[];
 
-elecList=getElectrodeList(subjectName,expDates{1},protocolNames{1},folderSourceString,gridType);
-numElectrodes = length(elecList);
+electrodeListLFP=getElectrodeList(subjectName,expDates{1},protocolNames{1},folderSourceString,gridType);
+numElectrodesLFP = length(electrodeListLFP);
+
 for i=1:numDays    
     % Impedances
-    impedanceFile = fullfile(folderSourceString, 'data', subjectName, gridType, expDates{i}, 'impedanceValues');
+    impedanceFile = fullfile(folderSourceString, 'data', subjectName, gridType, expDates{i}, 'impedanceValues.mat');
+    
     if exist(impedanceFile,'file')
         load(impedanceFile);
         badElectrodes = unique([badElectrodes find(impedanceValues>2500)]);
@@ -682,13 +733,20 @@ for i=1:numDays
         disp([impedanceFile ' does not exist! Bad Electrodes not found..']);
     end
 
-    load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP','rfValues.mat'));
-    load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP',['rfParams' num2str(poolingOption)])); 
-    rfVals(i,:,:,:,:) = rfValsRMS; %#ok<*AGROW>
-    params = paramsRMSScaled;
+    
+    rfValuesLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP',['rfValues' fileTag filterStr '.mat']));
+    rfParamsLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP',['rfParams' num2str(poolingOption) fileTag filterStr '.mat']));
+    if strcmp(rfMeasureForLFP,'RMS')
+       rfVals(i,:,:,:,:) = rfValuesLFP.rfValsRMS; %#ok<*AGROW>
+       params = rfParamsLFP.paramsRMSScaled;
+    elseif strcmp(rfMeasureForLFP,'Min')
+       rfVals(i,:,:,:,:) = rfValuesLFP.rfValsMin; %#ok<*AGROW>
+       params = rfParamsLFP.paramsMinScaled;
+    end
 
-    for jj=1:numElectrodes
-        j=elecList(jj);
+    for jj=1:numElectrodesLFP
+        j=electrodeListLFP(jj);
+        
         azi(i,j) = params{j,timePeriodPos}(1);
         ele(i,j) = params{j,timePeriodPos}(2);
 %         rfSizeAzi(i,j) = params{j,timePeriodPos}(3);
@@ -699,10 +757,12 @@ for i=1:numDays
     end
     
     % Get the same for spikes
-    load(fullfile(folderSourceString, 'data', subjectName, gridType, expDates{i}, protocolNames{i}, 'RFMeasures', 'Spikes', 'rfValues'));
-    load(fullfile(folderSourceString, 'data', subjectName, gridType, expDates{i}, protocolNames{i}, 'RFMeasures', 'Spikes', ['rfParams' num2str(poolingOption)]));
-    rfValsSpikes(i,:,:,:,:) = rfValsRMS;
-%    paramsSpikes = paramsRMSScaled;
+    
+    rfValuesSpikes = load(fullfile(folderSourceString, 'data', subjectName, gridType, expDates{i}, protocolNames{i}, 'RFMeasures', 'Spikes', 'rfValues'));
+%    rfParamsSpikes = load(fullfile(folderSourceString, 'data', subjectName, gridType, expDates{i}, protocolNames{i}, 'RFMeasures', 'Spikes', ['rfParams' num2str(poolingOption)]));
+    rfValsSpikes(i,:,:,:,:) = rfValuesSpikes.rfValsRMS;
+%    paramsSpikes = rfParamsSpikes.paramsRMSScaled;
+
 % 
 %     for jj=1:numElectrodes
 %         j=elecList(jj);
@@ -723,13 +783,14 @@ meanRFValsSpikes = squeeze(mean(rfValsSpikes,1));
 % numChans=size(meanRFVals,3);
 % numTimePeriods = size(meanRFVals,4);
 
-for ii=1:numElectrodes
-    i=elecList(ii);
+for ii=1:numElectrodesLFP
+    i=electrodeListLFP(ii);
+    
     [row,column] = electrodePositionOnGrid(i,gridType,subjectName);
     maxVals(i) = max(max(squeeze(meanRFVals(:,:,i,timePeriodPos))));
     maxValsByElectrode(row,column) = maxVals(i);
     
-    maxValsSpikes(i) = max(max(squeeze(meanRFValsSpikes(:,:,i,timePeriodPos))));
+    maxValsSpikes(i) = max(max(squeeze(meanRFValsSpikes(:,:,i,timePeriodPos))));    % Assuming that same number of spike electrodes also exist
     maxValsByElectrodeSpikes(row,column) = maxValsSpikes(i);
 end
 
@@ -740,7 +801,9 @@ goodElectrodes=setdiff(find(maxVals>rmsThreshold),badElectrodes);
 
 % Plot grid in color
 [~,electrodeColorNames,electrodeArray] = showElectrodeLocationsInColor([],hGridPlot,1,0,1,gridType,subjectName);
-showElectrodeLocations([],setdiff(elecList,goodElectrodes),'w',hGridPlot,1,1,gridType,subjectName);
+
+showElectrodeLocations([],setdiff(electrodeListLFP,goodElectrodes),'w',hGridPlot,1,1,gridType,subjectName);
+
 showElectrodeLocations([],badElectrodes,'k',hGridPlot,1,1,gridType,subjectName);
 
 % Receptive fields
@@ -770,7 +833,9 @@ end
 hold(hRFPlotLFPAllElectrodes,'off');
 axis(hRFPlotLFPAllElectrodes,axisLims);
 end
-function [elecList,electrodeString]=getElectrodeList(subjectName,expDate,protocolName,folderSourceString,gridType)
+
+function [electrodeList,electrodeString]=getElectrodeList(subjectName,expDate,protocolName,folderSourceString,gridType)
+
 
 folderName = fullfile(folderSourceString,'data', subjectName, gridType, expDate, protocolName);
 folderSegment = fullfile(folderName, 'segmentedData');
