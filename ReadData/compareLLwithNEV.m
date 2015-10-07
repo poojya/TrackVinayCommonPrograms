@@ -3,7 +3,7 @@
 % 1 - Mapping 1
 % 2 - Task Gabor
 
-function matchingParameters=compareLLwithNEV(folderExtract,activeSide,showResults)
+function matchingParameters=compareLLwithNEV(folderExtract,activeSide,showResults,convertToImageFlag)
 
 load(fullfile(folderExtract,'LL.mat'));
 load(fullfile(folderExtract,'StimResults.mat'));
@@ -21,7 +21,11 @@ if activeSide==2 % SRC protocol
     oriLL = LL.orientationDeg;
     
 elseif activeSide==0 % Map0
-    validMap = find(LL.stimType1==1);
+    if convertToImageFlag
+        validMap = find(LL.stimType1==8);
+    else
+        validMap = find(LL.stimType1==1);
+    end
     aziLL = LL.azimuthDeg1(validMap);
     eleLL = LL.elevationDeg1(validMap);
     sigmaLL = LL.sigmaDeg1(validMap);

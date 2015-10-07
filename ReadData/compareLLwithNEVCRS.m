@@ -13,7 +13,7 @@ load(fullfile(folderExtract,'digitalEvents.mat'));
 
 % [Vinay] - In CRS index 0 in LL represents the task gabor, whereas index
 % 1, 2 and 3 represent gabor0 (S), gabor1 (R) and gabor2 (C) respectively
-% activeSide cane be 0,1,2,[0 1],[0 2],[1 2] or [0 1 2]
+% activeSide can be 0,1,2,[0 1],[0 2],[1 2] or [0 1 2]
 % Irrespective of that, the parameter values for each gabor are stored.
 % Therefore we just get the values for each one of them.
     

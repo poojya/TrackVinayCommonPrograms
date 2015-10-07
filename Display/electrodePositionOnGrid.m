@@ -1,6 +1,7 @@
 function [row,column,electrodeArray] = electrodePositionOnGrid(electrodeNum,gridType,subjectName,gridLayout)
 
 if ~exist('subjectName','var');         subjectName=[];                 end
+if ~exist('gridLayout','var');         gridLayout=1;                 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EEG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if strcmpi(gridType,'EEG')
