@@ -296,7 +296,7 @@ hFRMax = uicontrol('Parent',hTimingPanel,'Unit','Normalized', ...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     function plotSingleChannel_Callback(~,~)
         
-        electrodeNum = elecList(get(hElectrodeNum,'val'));
+        electrodeNum = electrodeList(get(hElectrodeNum,'val'));
         dayNum = get(hDayNum,'val');
         timeLims = [str2double(get(hTimeMin,'String')) str2double(get(hTimeMax,'String'))];
 
