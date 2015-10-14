@@ -25,7 +25,7 @@ if ~exist('electrodeList','var');       electrodeList=[];                   end
 if ~exist('folderOutString','var');     folderOutString=folderSourceString; end
 if ~exist('applyFilterFlag','var');     applyFilterFlag = 0;                end
 
-stimPosGreaterThanOne=0; % 0 - all, 1 - all except the first stimulus in each trial, 2 - only the first stimulus of each trial
+stimPosGreaterThanOne=0; % 0 - all, 1 - all except the first stimul us in each trial, 2 - only the first stimulus of each trial
 
 if isempty(timeRangeList)
     timeRangeList{1}={[40 100]/1000};

@@ -834,7 +834,7 @@ hold(hRFPlotLFPAllElectrodes,'off');
 axis(hRFPlotLFPAllElectrodes,axisLims);
 end
 
-function [electrodeList,electrodeString]=getElectrodeList(subjectName,expDate,protocolName,folderSourceString,gridType)
+function [elecList,electrodeString]=getElectrodeList(subjectName,expDate,protocolName,folderSourceString,gridType)
 
 
 folderName = fullfile(folderSourceString,'data', subjectName, gridType, expDate, protocolName);
