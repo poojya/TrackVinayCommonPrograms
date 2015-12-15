@@ -2,6 +2,7 @@ function [row,column,electrodeArray] = electrodePositionOnGrid(electrodeNum,grid
 
 if ~exist('subjectName','var');         subjectName=[];                 end
 if ~exist('gridLayout','var');         gridLayout=1;                 end
+if ~exist('gridType','var');         gridType='Microelectrode';                 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EEG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if strcmpi(gridType,'EEG')
@@ -71,7 +72,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Microelectrode %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
 if strcmpi(gridType,'Microelectrode')
-    if strcmp(subjectName,'abu') || strcmp(subjectName,'rafiki')
+    if strcmp(subjectName,'abu') || strcmp(subjectName,'rafiki') || isempty(subjectName)
         
         electrodeArray = ...
             [00 02 01 03 04 06 08 10 14 00;
@@ -85,7 +86,7 @@ if strcmpi(gridType,'Microelectrode')
             79 80 84 86 87 89 91 94 63 95;
             00 81 83 85 88 90 92 93 96 00];
         
-    elseif strcmp(subjectName,'alpa') || isempty(subjectName)
+    elseif strcmp(subjectName,'alpa')
         
         electrodeArray = ...
            [00 88 78 68 58 48 38 28 18 00;
