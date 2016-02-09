@@ -1,51 +1,42 @@
 % Generate reference data - bipolar, average, CSD
 % 10-20 EEG system
 % Vinay Shirhatti, 19 September 2014
+%
+% modified from genRefData in GammaStimDiscontinuity Project
+% Vinay, 23 December 2015
+%
+% INPUTS:
+% monkeyName, expDate, protocolName, folderSourceString, gridType as per
+% the particular case to process
+% refType:  1 => bipolar
+%           2 => average
+%           3 => csd
+%
 %==========================================================================
 
 function genRefData(monkeyName,expDate,protocolName,folderSourceString,gridType,refType)
 
-% Check the OS and set paths accordingly
-if isunix
-    folderSourceString = appendIfNotPresent(folderSourceString,'/');
-    folderNameMain = [folderSourceString 'data/' monkeyName '/' gridType '/' expDate '/' protocolName '/'];
+% Prepare folders
+folderNameMain = fullfile(folderSourceString,'data',monkeyName,gridType,expDate,protocolName);
 
-    % Input folder
-    lfpFolder  = [folderNameMain 'segmentedData/LFP/'];
+% Input folder
+lfpFolder = fullfile(folderNameMain,'segmentedData','LFP');
 
-    % Output folder
-    if refType == 1 % bipolar
-        outputFolder = [lfpFolder 'bipolar/'];
-        makeDirectory(outputFolder);
-    elseif refType == 2 % average
-        outputFolder = lfpFolder;
-        makeDirectory(outputFolder);
-    elseif refType == 3 % csd
-        outputFolder = [lfpFolder 'csd/'];
-        makeDirectory(outputFolder);
-    end
-elseif ispc
-    folderSourceString = appendIfNotPresent(folderSourceString,'\');
-    folderNameMain = [folderSourceString 'data\' monkeyName '\' gridType '\' expDate '\' protocolName '\'];
-
-    % Input folder
-    lfpFolder  = [folderNameMain 'segmentedData\LFP\'];
-
-    % Output folder
-    if refType == 1 % bipolar
-        outputFolder = [lfpFolder 'bipolar\'];
-        makeDirectory(outputFolder);
-    elseif refType == 2 % average
-        outputFolder = lfpFolder;
-        makeDirectory(outputFolder);
-    elseif refType == 3 % csd
-        outputFolder = [lfpFolder 'csd\'];
-        makeDirectory(outputFolder);
-    end
+% Output folder
+if refType == 1 % bipolar
+    outputFolder = fullfile(lfpFolder,'bipolar');
+    makeDirectory(outputFolder);
+elseif refType == 2 % average
+    outputFolder = lfpFolder;
+    makeDirectory(outputFolder);
+elseif refType == 3 % csd
+    outputFolder = fullfile(lfpFolder,'csd');
+    makeDirectory(outputFolder);
 end
 
+
 % Load lfpInfo for electrodes' information
-load([lfpFolder 'lfpInfo.mat']);
+load(fullfile(lfpFolder,'lfpInfo.mat'));
 
 % number of electrodes
 numElecs = length(electrodesStored);
@@ -371,6 +362,29 @@ else
     disp('Implemented only for EEG at the moment');
 end    
 
+
+end
+
+function electrodeList = sortElectrodeListWRTGrid(electrodeList,monkeyName)
+
+for i=1:length(electrodeList)
+    [row(i),column(i),~] = electrodePositionOnGrid(electrodeList(i),'Microelectrode',monkeyName);
+end
+
+% construct a matrix such that:
+% first col => index
+% second col: row numbers of electrodes
+% third col: col numbers of electrodes
+electrodePositions = cat(1,1:length(electrodeList),row,column);
+electrodePositions = electrodePositions';
+
+electrodePositions = sortrows(electrodePositions,2); % sort by row numbers first - ascending
+electrodePositions = electrodePositions(end:-1:1,:,:); % invert - make it descending
+electrodePositions = sortrows(electrodePositions,3); % sort by colomn number (this overrides thhe first sort so that it is the major determinant)
+electrodePositions = electrodePositions(end:-1:1,:,:); % invert so that first row has the highest column number i.e. rightmost
+% effectively by row - ascending, by col - descending, as required
+
+electrodeList = electrodeList(electrodePositions(:,1,1)); % reassign electrodeList as per the new arrangement
 
 end
             

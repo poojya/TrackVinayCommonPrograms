@@ -3,27 +3,32 @@
 % 2. maxLimit
 % If yes, that trial is marked as a bad trial
 
-function [allBadTrials,badTrials] = findBadTrialsWithLFPv2(monkeyName,expDate,protocolName,folderSourceString,gridType,checkTheseElectrodes,threshold,maxLimit,showElectrodes,minLimit,saveDataFlag,checkPeriod)
+function [allBadTrials,badTrials] = findBadTrialsWithLFPv2(monkeyName,expDate,protocolName,folderSourceString,gridType,checkTheseElectrodes,processAllElectrodes,threshold,maxLimit,showElectrodes,minLimit,saveDataFlag,checkPeriod)
 
 if ~exist('checkTheseElectrodes','var');     checkTheseElectrodes = [33 12 80 63 44];   end
+if ~exist('processAllElectrodes','var');     processAllElectrodes = 0;                  end
 if ~exist('folderSourceString','var');       folderSourceString = 'G:';                 end
 if ~exist('threshold','var');                threshold = 6;                             end
 if ~exist('minLimit','var');                 minLimit = -2000;                          end
 if ~exist('saveDataFlag','var');             saveDataFlag = 1;                          end
-if ~exist('checkPeriod','var');             checkPeriod = [-0.7 0.8];                          end
+if ~exist('checkPeriod','var');             checkPeriod = [-0.7 0.8];                   end
 
 folderName = fullfile(folderSourceString,'data',monkeyName,gridType,expDate,protocolName);
 folderSegment = fullfile(folderName,'segmentedData');
 
 load(fullfile(folderSegment,'LFP','lfpInfo.mat'));
 
-numElectrodes = length(checkTheseElectrodes);
+if processAllElectrodes % compute bad trials for all the saved electrodes
+    numElectrodes = length(analogChannelsStored);
+else % compute bad trials for only the electrodes mentioned
+    numElectrodes = length(checkTheseElectrodes);
+end
 
 allBadTrials = cell(1,numElectrodes);
 nameElec = cell(1,numElectrodes);
 
 for i=1:numElectrodes
-    electrodeNum=checkTheseElectrodes(i);
+    electrodeNum=analogChannelsStored(i);
     load(fullfile(folderSegment,'LFP',['elec' num2str(electrodeNum) '.mat']));
     
     disp(['Processing electrode: ' num2str(electrodeNum)]);
@@ -51,18 +56,22 @@ for i=1:numElectrodes
     allBadTrials{i} = unique([tmpBadTrials tmpBadTrials2 tmpBadTrials3]);
 end
 
-badTrials=allBadTrials{1};
+numElectrodes = length(checkTheseElectrodes); % check the list for these electrodes only to generate the overall badTrials list
+j = find(analogChannelsStored==checkTheseElectrodes(1));
+badTrials=allBadTrials{j};
 for i=1:numElectrodes
-    badTrials=intersect(badTrials,allBadTrials{i}); % in the previous case we took the union
+    j = find(analogChannelsStored==checkTheseElectrodes(i));
+    badTrials=intersect(badTrials,allBadTrials{j}); % in the previous case we took the union
 end
 
 disp(['total Trials: ' num2str(numTrials) ', bad trials: ' num2str(badTrials)]);
 
 for i=1:numElectrodes
+    j = find(analogChannelsStored==checkTheseElectrodes(i));
     if length(allBadTrials{i}) ~= length(badTrials)
-        disp(['Bad trials for electrode ' num2str(checkTheseElectrodes(i)) ': ' num2str(length(allBadTrials{i}))]);
+        disp(['Bad trials for electrode ' num2str(checkTheseElectrodes(i)) ': ' num2str(length(allBadTrials{j}))]);
     else
-        disp(['Bad trials for electrode ' num2str(checkTheseElectrodes(i)) ': all (' num2str(length(badTrials)) ')']);
+        disp(['Bad trials for electrode ' num2str(checkTheseElectrodes(i)) ': common bad trials only (' num2str(length(badTrials)) ')']);
     end
 end
 

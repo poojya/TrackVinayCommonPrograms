@@ -119,7 +119,8 @@ for i=1:cAnalog
     end
 end
 
-segmentChannelNums = str2num(segmentLabels(:,5:end));
+segmentLabelsElec = mat2cell(segmentLabels(:,1:4),ones(size(segmentLabels(:,1:4),1),1),4);
+segmentChannelNums = str2num(segmentLabels(strcmp(segmentLabelsElec,'elec'),5:end)); % get segments only for spiking channels
 neuralChannelNums  = str2num(neuralLabels(:,5:end));
 
 % Display these numbers
