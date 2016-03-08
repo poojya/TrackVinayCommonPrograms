@@ -17,7 +17,7 @@
 %**************************************************************************
 
 
-function [mlogSTFT,t,f,mlogSTFTElec] = genSTFT(folderName,electrodesList,goodPos,epoch,movingWin,mtmParams)
+function [mlogSTFT,t,f,STFTElec,mlogSTFTElec,stdSTFT,Serr] = genSTFT(folderName,electrodesList,goodPos,epoch,movingWin,mtmParams)
 
 folderSegment = fullfile(folderName,'segmentedData');
 folderLFP = fullfile(folderSegment,'LFP');
@@ -32,7 +32,7 @@ if ~exist('mtmParams','var')
     mtmParams.Fs = 2000;
     mtmParams.tapers=[1 1]; % normal stft with dpss window
     mtmParams.trialave=0;
-    mtmParams.err=0;
+    mtmParams.err=[1 0.05]; % [1 p] - theoritical error bars
     mtmParams.pad=-1;
 end
 
@@ -46,11 +46,13 @@ for i = 1:length(electrodesList)
     disp(['elec' num2str(electrodesList(i))]);
     clear analogData
     load(fullfile(folderLFP,['elec' num2str(electrodesList(i)) '.mat']));
-    [STFTElec(:,i),mlogSTFTElec(:,i),~,t,f] = getSpectrum(analogData(goodPos,epoch),timeVals,specType,mtmParams,movingWin,epoch(1),epoch(2),takeLogTrial);
+    [STFTElec(:,:,i),mlogSTFTElec(:,i),~,t,f,Serr(:,:,:,i)] = getSpectrum(analogData(goodPos,epoch),timeVals,specType,mtmParams,movingWin,epoch(1),epoch(2),takeLogTrial);
     
 end
 
 mlogSTFT = mean(mlogSTFTElec,2); % mean across electrodes
-stdlogSTFT = 
+
+% mSTFT = mean(STFTElec,2); % mean across trials for an electrode
+stdSTFT = std(squeeze(mean(STFTElec,2)),[],2); % std across electrodes 
 
 end

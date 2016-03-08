@@ -90,6 +90,7 @@ else
             stimResults.sigma = convertUnits(sigma',100);
             stimResults.orientation = convertUnits(orientation');
             stimResults.spatialFrequency = convertUnits(spatialFrequency',100);
+            stimResults.side = 0;
             
         elseif((length(azimuth) == length(mapping1Times)) && isempty(mapping0Times))
             disp('Only Mapping 1 is used');
@@ -101,6 +102,7 @@ else
             stimResults.sigma = convertUnits(sigma',100);
             stimResults.orientation = convertUnits(orientation');
             stimResults.spatialFrequency = convertUnits(spatialFrequency',100);
+            stimResults.side = 1;
             
         else
             disp('Digital codes from both sides!!!');
@@ -112,6 +114,7 @@ else
             stimResults.sigma = convertUnits(sigma',100);
             stimResults.orientation = convertUnits(orientation');
             stimResults.spatialFrequency = convertUnits(spatialFrequency',100);
+            stimResults.side = [0 1];
         end
     end
 end
@@ -195,7 +198,7 @@ if (max(abs(numStimTask(nonInstructionTrials) - numStimMap0(nonInstructionTrials
     disp('Mapping0 and Task times are the same');
     numStims = numStimMap0;
     stimResults.time = [digitalCodeInfo(find(convertStrCodeToDec('M0')==allDigitalCodesInDec)).time]';
-    stimResults.side = 0;
+%     stimResults.side = 0;
     taskType = convertUnits([digitalCodeInfo(find(convertStrCodeToDec('TG')==allDigitalCodesInDec)).value])'; 
     
     if sum(taskType)==0 % Target is always null
@@ -206,7 +209,7 @@ elseif (max(abs(numStimTask(nonInstructionTrials) - numStimMap1(nonInstructionTr
     disp('Mapping1 and Task times are the same');
     numStims = numStimMap1;
     stimResults.time = [digitalCodeInfo(find(convertStrCodeToDec('M1')==allDigitalCodesInDec)).time]';
-    stimResults.side = 1;
+%     stimResults.side = 1;
     taskType = convertUnits([digitalCodeInfo(find(convertStrCodeToDec('TG')==allDigitalCodesInDec)).value])';
     
     if sum(taskType)==0 % Target is always null
@@ -222,7 +225,7 @@ else
         numStims = numStimMap0;
         stimResults.time = [digitalCodeInfo(find(convertStrCodeToDec('M0')==allDigitalCodesInDec)).time]';
         
-        stimResults.side = 0;
+%         stimResults.side = 0;
         taskType = convertUnits([digitalCodeInfo(find(convertStrCodeToDec('M0')==allDigitalCodesInDec)).value])'; % Assume task times and types are the same as M0
     
     elseif sum(numStimMap0)==0 && sum(numStimMap1)>0
@@ -231,7 +234,7 @@ else
         numStims = numStimMap1;
         stimResults.time = [digitalCodeInfo(find(convertStrCodeToDec('M1')==allDigitalCodesInDec)).time]';
         
-        stimResults.side = 1;
+%         stimResults.side = 1;
         taskType = convertUnits([digitalCodeInfo(find(convertStrCodeToDec('M1')==allDigitalCodesInDec)).value])'; % Assume task times and types are the same as M1
     end
 end
@@ -251,6 +254,9 @@ for i=1:numTrials
         elseif stimResults.side==1
             stimResults.stimOnFrame(pos+1:pos+numStims(i)) = ...
                 (mapping1Times(pos+1:pos+numStims(i)) - mapping1Times(pos+1))*frameRate;
+        else % [0 1] case i.e. both gabors are drawn
+            stimResults.stimOnFrame(pos+1:pos+numStims(i)) = ...
+                (mapping0Times(pos+1:pos+numStims(i)) - mapping0Times(pos+1))*frameRate;
         end
         
         stimResults.instructionTrials(pos+1:pos+numStims(i)) = instructionTrials(i); %always zero

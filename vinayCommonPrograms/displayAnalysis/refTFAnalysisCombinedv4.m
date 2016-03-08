@@ -253,22 +253,28 @@ if strncmp(protocolName,'GRF',3)
     % title 1
     title1ON = 1;
     hTitle1 = uicontrol('Parent',hSelectParamPanel,'Unit','Normalized', ...
-    'Position',[0 1-2*selectParamHeight 0.3 selectParamHeight],...
+    'Position',[0 1-2*selectParamHeight 0.25 selectParamHeight],...
     'BackgroundColor', backgroundColor,...
     'Style','checkbox','String','title 1','FontSize',fontSizeSuperTiny, 'Callback',{@selTitle1_Callback});
 
     % title 1
     title2ON = 1;
     hTitle2 = uicontrol('Parent',hSelectParamPanel,'Unit','Normalized', ...
-    'Position',[0.33 1-2*selectParamHeight 0.3 selectParamHeight],...
+    'Position',[0.25 1-2*selectParamHeight 0.25 selectParamHeight],...
     'BackgroundColor', backgroundColor,...
     'Style','checkbox','String','title 2','FontSize',fontSizeSuperTiny, 'Callback',{@selTitle2_Callback});
 
     nShow = 1;
     hNumTrials = uicontrol('Parent',hSelectParamPanel,'Unit','Normalized', ...
-    'Position',[0.69 1-2*selectParamHeight 0.3 selectParamHeight],...
+    'Position',[0.50 1-2*selectParamHeight 0.25 selectParamHeight],...
     'BackgroundColor', backgroundColor,...
     'Style','checkbox','String','n','FontSize',fontSizeSuperTiny, 'Callback',{@selNumTrials_Callback});
+
+    poolElec = 1;
+    hPoolElec = uicontrol('Parent',hSelectParamPanel,'Unit','Normalized', ...
+    'Position',[0.75 1-2*selectParamHeight 0.25 selectParamHeight],...
+    'BackgroundColor', backgroundColor,...
+    'Style','checkbox','String','poolE','FontSize',fontSizeSuperTiny, 'Callback',{@selPoolElec_Callback});
 
     ignoreTrials = 1;
     hIgnoreTrials = uicontrol('Parent',hSelectParamPanel,'Unit','Normalized', ...
@@ -556,27 +562,32 @@ hAnalysisType = uicontrol('Parent',hPlotOptionsPanel,'Unit','Normalized', ...
     'Style','popup','String',analysisTypeString,'FontSize',fontSizeSmall);
 
 % Vinay - choose the plots to be included in the combined figure
-drawStim = 1; drawERP = 0; drawFR = 0; drawTF = 0; drawTrends = 0;
+drawStim = 1; drawERP = 0; drawFR = 0; drawTF = 0; drawTrends = 0; drawFFT = 0;
 hDrawStim = uicontrol('Parent',hPlotOptionsPanel,'Unit','Normalized', ...
-    'Position',[0 1-4*plotOptionsHeight 0.18 plotOptionsHeight],...
+    'Position',[0 1-4*plotOptionsHeight 0.16 plotOptionsHeight],...
     'BackgroundColor', backgroundColor,...
     'Style','checkbox','String','Stim','FontSize',fontSizeSuperTiny, 'Callback',{@drawStim_Callback});
 hDrawERP = uicontrol('Parent',hPlotOptionsPanel,'Unit','Normalized', ...
-    'Position',[0.2 1-4*plotOptionsHeight 0.18 plotOptionsHeight],...
+    'Position',[0.16 1-4*plotOptionsHeight 0.16 plotOptionsHeight],...
     'BackgroundColor', backgroundColor,...
     'Style','checkbox','String','ERP','FontSize',fontSizeSuperTiny, 'Callback',{@drawERP_Callback});
 hDrawFR = uicontrol('Parent',hPlotOptionsPanel,'Unit','Normalized', ...
-    'Position',[0.4 1-4*plotOptionsHeight 0.18 plotOptionsHeight],...
+    'Position',[0.32 1-4*plotOptionsHeight 0.16 plotOptionsHeight],...
     'BackgroundColor', backgroundColor,...
     'Style','checkbox','String','FR','FontSize',fontSizeSuperTiny, 'Callback',{@drawFR_Callback});
 hDrawTF = uicontrol('Parent',hPlotOptionsPanel,'Unit','Normalized', ...
-    'Position',[0.6 1-4*plotOptionsHeight 0.18 plotOptionsHeight],...
+    'Position',[0.48 1-4*plotOptionsHeight 0.16 plotOptionsHeight],...
     'BackgroundColor', backgroundColor,...
     'Style','checkbox','String','TF','FontSize',fontSizeSuperTiny, 'Callback',{@drawTF_Callback});
 hDrawTrends = uicontrol('Parent',hPlotOptionsPanel,'Unit','Normalized', ...
-    'Position',[0.8 1-4*plotOptionsHeight 0.18 plotOptionsHeight],...
+    'Position',[0.64 1-4*plotOptionsHeight 0.16 plotOptionsHeight],...
     'BackgroundColor', backgroundColor,...
     'Style','checkbox','String','Trends','FontSize',fontSizeSuperTiny, 'Callback',{@drawTrends_Callback});
+hDrawFFT = uicontrol('Parent',hPlotOptionsPanel,'Unit','Normalized', ...
+    'Position',[0.8 1-4*plotOptionsHeight 0.16 plotOptionsHeight],...
+    'BackgroundColor', backgroundColor,...
+    'Style','checkbox','String','FFT','FontSize',fontSizeSuperTiny, 'Callback',{@drawFFT_Callback});
+
 
 
 % Vinay - adding a toggle button to use notched data
@@ -632,26 +643,33 @@ if strncmp(protocolName,'CRS',3)
     'Style','pushbutton','String','plot grid','FontSize',fontSizeMedium, ...
     'Callback',{@plotGrid_Callback});
 
+
     % titles to be shown on the plots
     % title 1
     title1ON = 1;
     hTitle1 = uicontrol('Parent',hSelectParamPanel,'Unit','Normalized', ...
-    'Position',[0 1-2*selectParamHeight 0.45 selectParamHeight],...
+    'Position',[0 1-2*selectParamHeight 0.25 selectParamHeight],...
     'BackgroundColor', backgroundColor,...
     'Style','checkbox','String','title 1','FontSize',fontSizeSuperTiny, 'Callback',{@selTitle1_Callback});
 
     % title 1
     title2ON = 1;
     hTitle2 = uicontrol('Parent',hSelectParamPanel,'Unit','Normalized', ...
-    'Position',[0.5 1-2*selectParamHeight 0.45 selectParamHeight],...
+    'Position',[0.25 1-2*selectParamHeight 0.25 selectParamHeight],...
     'BackgroundColor', backgroundColor,...
     'Style','checkbox','String','title 2','FontSize',fontSizeSuperTiny, 'Callback',{@selTitle2_Callback});
 
     nShow = 1;
     hNumTrials = uicontrol('Parent',hSelectParamPanel,'Unit','Normalized', ...
-    'Position',[0.69 1-2*selectParamHeight 0.3 selectParamHeight],...
+    'Position',[0.50 1-2*selectParamHeight 0.25 selectParamHeight],...
     'BackgroundColor', backgroundColor,...
     'Style','checkbox','String','n','FontSize',fontSizeSuperTiny, 'Callback',{@selNumTrials_Callback});
+
+    poolElec = 1;
+    hPoolElec = uicontrol('Parent',hSelectParamPanel,'Unit','Normalized', ...
+    'Position',[0.75 1-2*selectParamHeight 0.25 selectParamHeight],...
+    'BackgroundColor', backgroundColor,...
+    'Style','checkbox','String','poolE','FontSize',fontSizeSuperTiny, 'Callback',{@selPoolElec_Callback});
 
     ignoreTrials = 0;
     hIgnoreTrials = uicontrol('Parent',hSelectParamPanel,'Unit','Normalized', ...
@@ -1116,6 +1134,7 @@ uicontrol('Parent',hTFPlotSettingsPanel,'Unit','Normalized', ...
         
         cmin = str2double(get(hTFcmin,'String'));
         cmax = str2double(get(hTFcmax,'String'));
+        spectrumType = get(hTFSpectrumType,'val');
         
         drawStim = get(hDrawStim, 'val');
         drawERP = get(hDrawERP, 'val');
@@ -1126,6 +1145,7 @@ uicontrol('Parent',hTFPlotSettingsPanel,'Unit','Normalized', ...
         title1ON = get(hTitle1,'val');
         title2ON = get(hTitle2,'val');
         nShow = get(hNumTrials,'val');
+        poolElec = get(hPoolElec,'val');
         
         % Load TF Parameters
         % MTM
@@ -1184,8 +1204,8 @@ uicontrol('Parent',hTFPlotSettingsPanel,'Unit','Normalized', ...
         plotLFPSpikeDataVaryParameters1Channel(hVaryParamPlot,analogChannelString,analogChannelString2,a,e,s,f,o,c,t,r,p,gabor7, param7, gabor8, param8, folderLFP,...
             analysisType,timeVals,plotColor,BLMin,BLMax,STMin,STMax,folderName, protocolNumber, notchData,useBipolar,plotSEM,holdOnState,plotLineWidth,...
             protocolName,useAllBadTrials,mtmParams,movingWin,fBandLow,fBandHigh,...
-            spikeChannelNumber,unitID,STAMin,STAMax,removeMeanSTA,folderSpikes,cmin,cmax,fftmin,fftmax,tmin,tmax,drawStim,drawERP,drawFR,drawTF,drawTrends,...
-            subjectName,expDate,gridType,title1ON,title2ON,nShow,ignoreTrials,ignoreTrialNum);
+            spikeChannelNumber,unitID,STAMin,STAMax,removeMeanSTA,folderSpikes,cmin,cmax,fftmin,fftmax,tmin,tmax,drawStim,drawERP,drawFR,drawTF,drawTrends,drawFFT,...
+            subjectName,expDate,gridType,title1ON,title2ON,nShow,ignoreTrials,ignoreTrialNum,poolElec,spectrumType);
         
 
         if analogChannelPos<=length(analogChannelsStored)
@@ -1858,6 +1878,10 @@ function drawTrends_Callback(hObject,~,~)
        drawTrends = get(hObject,'val');
 end
 
+function drawFFT_Callback(hObject,~,~)
+       drawFFT = get(hObject,'val');
+end
+
 % -------------------------------------------------------------------------
 function selTitle1_Callback(hObject,~,~)
        title1ON = get(hObject,'val');
@@ -1869,6 +1893,10 @@ end
 
 function selNumTrials_Callback(hObject,~,~)
        nShow = get(hObject,'val');
+end
+
+function selPoolElec_Callback(hObject,~,~)
+       poolElec = get(hObject,'val');
 end
 
 function ignoreTrials_Callback(hObject,~,~)
@@ -2000,8 +2028,8 @@ end
 function plotLFPSpikeDataVaryParameters1Channel(plotHandles,channelString,analogChannelString2,a,e,s,f,o,c,t,r,p,gaborNum1,paramNum1,gaborNum2,paramNum2,folderLFP,...
 analysisType,timeVals,plotColor,BLMin,BLMax,STMin,STMax,folderName, protocolNumber, notchData,useBipolar,plotSEM,holdOnState,plotLineWidth,...
 protocolName,useAllBadTrials,mtmParams,movingWin,fBandLow,fBandHigh,...
-spikeChannelNumber,unitID,STAMin,STAMax,removeMeanSTA,folderSpikes,cmin,cmax,fftmin,fftmax,tmin,tmax,drawStim,drawERP,drawFR,drawTF,drawTrends,...
-subjectName,expDate,gridType,title1ON,title2ON,nShow,ignoreTrials,ignoreTrialNum)
+spikeChannelNumber,unitID,STAMin,STAMax,removeMeanSTA,folderSpikes,cmin,cmax,fftmin,fftmax,tmin,tmax,drawStim,drawERP,drawFR,drawTF,drawTrends,drawFFT,...
+subjectName,expDate,gridType,title1ON,title2ON,nShow,ignoreTrials,ignoreTrialNum,poolElec,spectrumType)
 
 folderExtract = fullfile(folderName,'extractedData');
 folderSegment = fullfile(folderName,'segmentedData');
@@ -2305,18 +2333,20 @@ if analysisType == 8 % get all plots
     figure; % figure
     text(0.3,0.96,[subjectName expDate protocolName],'unit','normalized','fontsize',10);
     
-    plotcount=drawStim+drawERP+drawFR+drawTF;
+    plotcount=drawStim+drawERP+drawFR+drawTF+drawFFT;
+    
+    gapX=0.006;gapY=0.012*plotcount;
 
     if drawTrends
         allplotsPosition = [0.05 0.05 0.6 0.9];
         
         if protocolNumber ~= 10
-            allplotsHandles = getPlotHandles(plotcount*numRows,numCols,allplotsPosition); % 4 rows for each 
+            allplotsHandles = getPlotHandles(plotcount*numRows,numCols,allplotsPosition,gapX,gapY); % 4 rows for each 
             % case - stimulus, erp, spike rate, tf spectrum
         else
             numColsAFP = inputdlg('Enter the number of unique Annulus widths: ','AFP');
             numColsAFP = str2num(numColsAFP{1});
-            allplotsHandles = getPlotHandles(plotcount*numRows,numColsAFP,allplotsPosition); % 4 rows for each 
+            allplotsHandles = getPlotHandles(plotcount*numRows,numColsAFP,allplotsPosition,gapX,gapY); % 4 rows for each 
             % case - stimulus, erp, spike rate, tf spectrum
         end
         
@@ -2339,12 +2369,12 @@ if analysisType == 8 % get all plots
 %         allplotsPosition = [0.05 0.1 0.9 0.55]; % lower half
 %         allplotsPosition = [0.05 0.65 0.9 0.3]; % upper half
         if protocolNumber ~= 10
-            allplotsHandles = getPlotHandles(plotcount*numRows,numCols,allplotsPosition); % 4 rows for each 
+            allplotsHandles = getPlotHandles(plotcount*numRows,numCols,allplotsPosition,gapX,gapY); % 4 rows for each 
             % case - stimulus, erp, spike rate, tf spectrum
         else
             numColsAFP = inputdlg('Enter the number of unique Annulus widths: ','AFP');
             numColsAFP = str2num(numColsAFP{1});
-            allplotsHandles = getPlotHandles(plotcount*numRows,numColsAFP,allplotsPosition); % 4 rows for each 
+            allplotsHandles = getPlotHandles(plotcount*numRows,numColsAFP,allplotsPosition,gapX,gapY); % 4 rows for each 
             % case - stimulus, erp, spike rate, tf spectrum
         end
     end
@@ -2366,7 +2396,9 @@ for k=1:numRows
             %------------------
             % Vinay - select good trials as per the electrode(s)
     %         useAllBadTrials = 1;
-            if useAllBadTrials && existsBadTrialFile
+            if strncmp(channelString,'ainp',4)
+                goodPos = setdiff(goodPos,badTrials);
+            elseif useAllBadTrials && existsBadTrialFile
                 elecIndex1 = (strcmp(channelString,nameElec) == 1);
 
                 if ~useBipolar
@@ -2693,7 +2725,7 @@ for k=1:numRows
                         showMean = 1;
                         mtmParams.trialave=0;
                         specType = 1;
-                        [~,~,dS,t2,f2] = getSpectrum(analogData(goodPos,:),mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,specType);
+                        [~,~,dS,t2,f2] = getSpectrum(analogData(goodPos,:),timeVals,specType,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
                         
                         freqRange = (f2 >= fBandLow) & (f2 <= fBandHigh);
                         
@@ -2801,16 +2833,16 @@ for k=1:numRows
                                 titleGabor1 = titleGabor(gaborNum1);
                                 titleGabor2 = titleGabor(gaborNum2);
                             elseif strncmp(protocolName,'GRF',3)
-                                titleGabor1 = 'gabor';
-                                titleGabor2 = 'gabor';
+                                titleGabor1 = [];
+                                titleGabor2 = [];
                             end
                             
                             if title1ON && title2ON
-                                titleStringStim = [titleGabor1 '-' titleParam1 ':' num2str(titleList1(k)) ',' titleGabor2 '-' titleParam2 ':' num2str(titleList2(j))];
+                                titleStringStim = [titleGabor1 ' ' titleParam1 ':' num2str(titleList1(k)) ',' titleGabor2 '-' titleParam2 ':' num2str(titleList2(j))];
                             elseif title1ON
-                                titleStringStim = [titleGabor1 '-' titleParam1 ':' num2str(titleList1(k))];
+                                titleStringStim = [titleGabor1 ' ' titleParam1 ':' num2str(titleList1(k))];
                             elseif title2ON
-                                titleStringStim = [titleGabor2 '-' titleParam2 ':' num2str(titleList2(j)) ' deg'];
+                                titleStringStim = [titleGabor2 ' ' titleParam2 ':' num2str(titleList2(j)) ' deg'];
                             end
 
                             kx = plotcount*(k-1) + 1;
@@ -2888,6 +2920,12 @@ for k=1:numRows
                             set(allplotsHandles(kx,jx),'xlim',[tmin tmax]);
 
                             ylimitFR{k,j} = get(allplotsHandles(kx,jx),'ylim');
+                            
+                            if jx==1
+                                ylabel(allplotsHandles(kx,jx),'Firing Rate','Fontweight','bold');
+                            else
+                                set(allplotsHandles(kx,jx),'YTickLabel',[]);
+                            end
                         end
                         
                         %--------------------------------------------------
@@ -2899,7 +2937,7 @@ for k=1:numRows
                             takeLogTrial = 0;
                             mtmParams.trialave=0;
                             specType = 1;
-                            [~,~,dS,t2,f2] = getSpectrum(analogData(goodPos,:),mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,specType);
+                            [~,~,dS,t2,f2] = getSpectrum(analogData(goodPos,:),timeVals,specType,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
 
                             kx = plotcount*(k-1) + drawStim + drawERP + drawFR + 1;
 
@@ -2983,6 +3021,94 @@ for k=1:numRows
 %                             colorbar;
                         end
                         
+                        if drawFFT
+                            
+                            kx = plotcount*(k-1) + drawStim + drawERP + drawFR + drawTF + 1;
+                            
+                            if ~poolElec
+                                if (spectrumType == 1) % raw
+                                    [SBL,f3]=mtspectrumc((analogData(goodPos,BLPos))',mtmParams); % baseline period
+                                    [SST,f3]=mtspectrumc((analogData(goodPos,STPos))',mtmParams); % stimulus period
+                                    plot(allplotsHandles(kx,jx),f3,conv2Log(mean(SST,2)),'color',plotColor,'Linewidth',plotLineWidth);
+                                    set(allplotsHandles(kx,jx),'Nextplot','add');
+                                    plot(allplotsHandles(kx,jx),f3,conv2Log(mean(SBL,2)),'color','g','Linewidth',plotLineWidth);
+
+                                elseif (spectrumType == 2) % difference from baseline
+                                    if xsST == xsBL 
+                                        [SBL,f3]=mtspectrumc((analogData(goodPos,BLPos))',mtmParams);
+                                        [SST,f3]=mtspectrumc((analogData(goodPos,STPos))',mtmParams);
+                                        plot(allplotsHandles(kx,jx),f3,10*(conv2Log(mean(SST,2))-conv2Log(mean(SBL,2))),'color',plotColor,'Linewidth',plotLineWidth);
+                                    else
+                                        disp('Choose same baseline and stimulus periods..');
+                                    end
+                                end
+
+                                set(allplotsHandles(kx,jx),'xlim',[fftmin fftmax]);
+                                
+                                xlabel(allplotsHandles(kx,jx),'Frequency (Hz)','Fontweight','bold');
+                                if jx==1
+                                    ylabel(allplotsHandles(kx,jx),'Power','Fontweight','bold');
+                                else
+                                    set(allplotsHandles(kx,jx),'YTickLabel',[]);
+                                end
+                            else
+                                
+                                rfDataFile = [subjectName gridType 'RFData.mat']; % cutoff = 100
+                                load(rfDataFile);
+                                
+                                epoch = BLPos;
+                                disp(['*** Baseline period calculation... (' num2str(kx) ',' num2str(jx) ')']);
+                                [mlogSTFTBL,t,f3,mlogSTFTElecBL] = genSTFT(folderName,highRMSElectrodes,goodPos,epoch);
+                                epoch = STPos;
+                                disp(['*** Stimulus period calculation... (' num2str(kx) ',' num2str(jx) ')']);
+                                [mlogSTFTST,t2,f2,mlogSTFTElecST] = genSTFT(folderName,highRMSElectrodes,goodPos,epoch);
+                                
+                                if (spectrumType == 1)
+                                    plot(allplotsHandles(kx,jx),f3,mlogSTFTST,'color',plotColor,'Linewidth',plotLineWidth);
+                                    set(allplotsHandles(kx,jx),'Nextplot','add');
+                                    plot(allplotsHandles(kx,jx),f3,mlogSTFTBL,'color','g','Linewidth',plotLineWidth);
+
+                                    % Vinay - plotting SEM
+                                    if plotSEM
+                                        thisPlotColor = get(plot(allplotsHandles(kx,jx),f3,mlogSTFTST,'color',plotColor,'Linewidth',plotLineWidth),'Color');
+                                        thisPlotColor(thisPlotColor==0) = 0.75;
+                                        fftSEMBL = std(mlogSTFTElecBL,[],2)./sqrt(size(mlogSTFTElecBL,2)); % Vinay - SEM = std/sqrt(n)
+                                        fftSEMST = std(mlogSTFTElecST,[],2)./sqrt(size(mlogSTFTElecST,2));
+
+                                        set(allplotsHandles(kx,jx),'Nextplot','add');
+                                        plot(allplotsHandles(kx,jx),f3,(mlogSTFTST+fftSEMST),'color',thisPlotColor);
+                                        plot(allplotsHandles(kx,jx),f3,(mlogSTFTST-fftSEMST),'color',thisPlotColor);
+                                        plot(allplotsHandles(kx,jx),f3,mlogSTFTST,'color',plotColor,'Linewidth',plotLineWidth);
+
+                                        plot(allplotsHandles(kx,jx),f3,(mlogSTFTBL+fftSEMBL),'color',thisPlotColor);
+                                        plot(allplotsHandles(kx,jx),f3,(mlogSTFTBL-fftSEMBL),'color',thisPlotColor);
+                                        plot(allplotsHandles(kx,jx),f3,mlogSTFTBL,'color','g','Linewidth',plotLineWidth);
+
+                                    end
+                                    set(allplotsHandles(kx,jx),'xlim',[fftmin fftmax]);
+                                elseif (spectrumType == 2)
+                                    diffmlogSTFT = mlogSTFTST-mlogSTFTBL;
+                                    plot(allplotsHandles(kx,jx),f3,diffmlogSTFT,'color',plotColor,'Linewidth',plotLineWidth);
+
+                                    % Vinay - plotting SEM
+                                    if plotSEM
+                                        thisPlotColor = get(plot(allplotsHandles(kx,jx),f3,diffmlogSTFT,'color',plotColor,'Linewidth',plotLineWidth),'Color');
+                                        thisPlotColor(thisPlotColor==0) = 0.75;
+                                        fftSEMSTBL = std(diffmlogSTFT,[],2)./sqrt(size(diffmlogSTFT,2)); % Vinay - SEM = std/sqrt(n)
+                     
+                                        set(allplotsHandles(kx,jx),'Nextplot','add');
+                                        plot(allplotsHandles(kx,jx),f3,(diffmlogSTFT+fftSEMSTBL),'color',thisPlotColor);
+                                        plot(allplotsHandles(kx,jx),f3,(diffmlogSTFT-fftSEMSTBL),'color',thisPlotColor);
+                                        plot(allplotsHandles(kx,jx),f3,diffmlogSTFT,'color',plotColor,'Linewidth',plotLineWidth);
+
+                                    end
+                                    set(allplotsHandles(kx,jx),'xlim',[fftmin fftmax]);
+                                end
+                                
+                            end     
+                            
+                        end
+                        
                     end
 
                 end
@@ -2991,8 +3117,8 @@ for k=1:numRows
                     titleGabor1 = titleGabor(gaborNum1);
                     titleGabor2 = titleGabor(gaborNum2);
                 elseif strncmp(protocolName,'GRF',3)
-                    titleGabor1 = 'gabor';
-                    titleGabor2 = 'gabor';
+                    titleGabor1 = [];
+                    titleGabor2 = [];
                 end
 
                 % Display title
@@ -3554,7 +3680,7 @@ else
                         showMean = 1;
                         mtmParams.trialave=0;
                         specType = 1;
-                        [~,~,dS,t2,f2] = getSpectrum(analogData(goodPos,:),mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,specType);
+                        [~,~,dS,t2,f2] = getSpectrum(analogData(goodPos,:),timeVals,specType,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
                         
                         freqRange = (f2 >= fBandLow) & (f2 <= fBandHigh);
                         
@@ -3653,7 +3779,7 @@ else
                         takeLogTrial = 0;
                         mtmParams.trialave=0;
                         specType = 1;
-                        [~,~,dS,t2,f2] = getSpectrum(analogData(goodPos,:),mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,specType);
+                        [~,~,dS,t2,f2] = getSpectrum(analogData(goodPos,:),timeVals,specType,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
 
                         % plot the difference spectrum
 %                             dS = dS + max(gabP(:));
@@ -3789,14 +3915,18 @@ if plotRF
     paramsStimulus(2) = (size(gabP,2)/2)+0.5;
 %     paramsStimulus(3) = 24;% 0.6 deg => 72 pixels, so sigma = 0.2 deg here
 %     paramsStimulus(4) = 24;
-    paramsStimulus(3) = 6*factor;% 0.6 deg => 72 pixels, so sigma = 0.2 deg here
-    paramsStimulus(4) = 6*factor;
+%     paramsStimulus(3) = 6*factor;% 0.6 deg => 72 pixels, so sigma = 0.2 deg here
+%     paramsStimulus(4) = 6*factor;
+    paramsStimulus(3) = 1*factor;% 0.1 deg => 12 pixels, fixation spot
+    paramsStimulus(4) = 1*factor;
     paramsStimulus(5)=0;
     paramsStimulus(6)=1;
 
     [~,~,boundaryXStimulus,boundaryYStimulus] = gauss2D(paramsStimulus);
     hold(h,'on');
-    plot(h,boundaryXStimulus,boundaryYStimulus,'color','r','linewidth',1.5);
+%     plot(h,boundaryXStimulus,boundaryYStimulus,'color','r','linewidth',1.5);
+%     % for RF
+    plot(h,boundaryXStimulus,boundaryYStimulus,'color','w','linewidth',1.5); % for fixation spot
 end
 
 end
@@ -3804,7 +3934,7 @@ end
 %==========================================================================
 
 function [gaborBackground,gaborRing] = getStimulusGabors(i1,i2,gaborNum1,paramNum1,gaborNum2,paramNum2,protocolName,protocolNumber,...
-    a,e,s,f,o,c,t,p,r,aValsUnique,eValsUnique,sValsUnique,fValsUnique,oValsUnique,cValsUnique,tValsUnique,pValsUnique,rValsUnique)
+    a,e,s,sf,o,c,t,p,r,aValsUnique,eValsUnique,sValsUnique,fValsUnique,oValsUnique,cValsUnique,tValsUnique,pValsUnique,rValsUnique)
 
 rFactor = 10;
 
@@ -3849,9 +3979,9 @@ rFactor = 10;
                 end
             case 4 % f
                 if i1 == fLen && i1>1
-                    f = i1-1;
+                    sf = i1-1;
                 else
-                    f = i1;
+                    sf = i1;
                 end
             case 5 % o
                 if i1 == oLen && i1>1
@@ -3894,9 +4024,9 @@ rFactor = 10;
                 end
             case 4 % f
                 if i2 == fLen && i2>1
-                    f = i2-1;
+                    sf = i2-1;
                 else
-                    f = i2;
+                    sf = i2;
                 end
             case 5 % o
                 if i2 == oLen && i2>1
@@ -3927,8 +4057,8 @@ rFactor = 10;
         if s==sLen && s>1
             s=s-1;
         end
-        if f==fLen && f>1
-            f=f-1;
+        if sf==fLen && sf>1
+            sf=sf-1;
         end
         if o==oLen && o>1
             o=o-1;
@@ -3946,7 +4076,7 @@ rFactor = 10;
         gaborBackground.azimuthDeg = 0;
         gaborBackground.elevationDeg = 0;
         gaborBackground.sigmaDeg = sValsUnique(s);
-        gaborBackground.spatialFreqCPD = fValsUnique(f);
+        gaborBackground.spatialFreqCPD = fValsUnique(sf);
         gaborBackground.orientationDeg = oValsUnique(o);
         gaborBackground.contrastPC = cValsUnique(c);
         gaborBackground.temporalFreqHz = tValsUnique(t);
@@ -4011,9 +4141,9 @@ rFactor = 10;
                 end
             case 4 % f
                 if i1 == fLen(gaborNum1) && i1>1
-                    f(gaborNum1,:) = i1-1;
+                    sf(gaborNum1,:) = i1-1;
                 else
-                    f(gaborNum1,:) = i1;
+                    sf(gaborNum1,:) = i1;
                 end
             case 5 % o
                 if i1 == oLen(gaborNum1) && i1>1
@@ -4068,9 +4198,9 @@ rFactor = 10;
                 end
             case 4 % f
                 if i2 == fLen(gaborNum2) && i2>1
-                    f(gaborNum2,:) = i2-1;
+                    sf(gaborNum2,:) = i2-1;
                 else
-                    f(gaborNum2,:) = i2;
+                    sf(gaborNum2,:) = i2;
                 end
             case 5 % o
                 if i2 == oLen(gaborNum2) && i2>1
@@ -4114,8 +4244,8 @@ rFactor = 10;
             if s(i)==sLen(i) && s(i)>1
                 s(i)=s(i)-1;
             end
-            if f(i)==fLen(i) && f(i)>1
-                f(i)=f(i)-1;
+            if sf(i)==fLen(i) && sf(i)>1
+                sf(i)=sf(i)-1;
             end
             if o(i)==oLen(i) && o(i)>1
                 o(i)=o(i)-1;
@@ -6885,13 +7015,13 @@ end
                     totalNumStim = totalNumStim + length(goodPosElec);
                     
                     if plotStyle==3 % line spectrum
-                        [~,SElecBL(:,c),~,~,f2] = getSpectrum(analogData(:,BLPos),mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,plotStyle);
-                        [~,SElecST(:,c),~,~,f2] = getSpectrum(analogData(:,STPos),mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,plotStyle);
+                        [~,SElecBL(:,c),~,~,f2] = getSpectrum(analogData(:,BLPos),timeVals,plotStyle,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
+                        [~,SElecST(:,c),~,~,f2] = getSpectrum(analogData(:,STPos),timeVals,plotStyle,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
                     else
                         if spectrumType==1 % raw spectrum
-                            [~,SElec(:,:,c),~,t2,f2] = getSpectrum(analogData,mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,plotStyle);
+                            [~,SElec(:,:,c),~,t2,f2] = getSpectrum(analogData,timeVals,plotStyle,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
                         else
-                            [~,~,dSElec(:,:,c),t2,f2] = getSpectrum(analogData,mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,plotStyle);
+                            [~,~,dSElec(:,:,c),t2,f2] = getSpectrum(analogData,timeVals,plotStyle,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
                         end
                     end
                     
@@ -6984,13 +7114,13 @@ end
                     totalNumStimD = totalNumStimD + length(goodPosElecD);
                     
                     if plotStyle==3 % line spectrum
-                        [~,SElecBLD(:,c),~,~,f2] = getSpectrum(analogDataD(:,BLPos),mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,plotStyle);
-                        [~,SElecSTD(:,c),~,~,f2] = getSpectrum(analogDataD(:,STPos),mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,plotStyle);
+                        [~,SElecBLD(:,c),~,~,f2] = getSpectrum(analogDataD(:,BLPos),timeVals,plotStyle,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
+                        [~,SElecSTD(:,c),~,~,f2] = getSpectrum(analogDataD(:,STPos),timeVals,plotStyle,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
                     else
                         if spectrumType==1 % raw spectrum
-                            [~,SElecD(:,:,c),~,t2,f2] = getSpectrum(analogDataD,mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,plotStyle);
+                            [~,SElecD(:,:,c),~,t2,f2] = getSpectrum(analogDataD,timeVals,plotStyle,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
                         else
-                            [~,~,dSElecD(:,:,c),t2,f2] = getSpectrum(analogDataD,mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,plotStyle);
+                            [~,~,dSElecD(:,:,c),t2,f2] = getSpectrum(analogDataD,timeVals,plotStyle,mtmParams,movingWin,BLMin,BLMax,takeLogTrial);
                         end
                     end
                 end
@@ -7882,7 +8012,7 @@ end
 
 %--------------------------------------------------------------------------
 %====================Spectrum calculation==================================
-function [S1,mlogS1,dS1,t2,f2] = getSpectrum(data,mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,specType)
+function [S1,mlogS1,dS1,t2,f2] = getSpectrum(data,timeVals,specType,mtmParams,movingWin,BLMin,BLMax,takeLogTrial)
 
 if ~exist ('takeLogTrial','var')
     takeLogTrial = 0;
@@ -7989,6 +8119,49 @@ end
 
 end
 
+
+function [dS,t2,f2,dSElec] = genTF(folderName,electrodesList,goodPos)
+
+folderSegment = fullfile(folderName,'segmentedData');
+folderLFP = fullfile(folderSegment,'LFP');
+
+load(fullfile(folderLFP,'lfpInfo.mat'));
+
+for i = 1:length(electrodesList)
+    
+    disp(['elec' num2str(electrodesList(i))]);
+    clear analogData
+    load(fullfile(folderLFP,['elec' num2str(electrodesList(i)) '.mat']));
+    [~,~,dSElec(:,:,i),t2,f2] = getSpectrum(analogData(goodPos,:),timeVals);
+    %[~,~,dSElec,t2,f2] = getSpectrum(analogData(goodPos,:),mtmParams,movingWin,takeLogTrial,BLMin,BLMax,timeVals,specType);
+    
+end
+
+dS = mean(dSElec,3); % mean across electrodes
+
+end
+
+function [mlogSTFT,t,f,mlogSTFTElec] = genSTFT(folderName,electrodesList,goodPos,epoch)
+
+folderSegment = fullfile(folderName,'segmentedData');
+folderLFP = fullfile(folderSegment,'LFP');
+
+load(fullfile(folderLFP,'lfpInfo.mat'));
+
+specType = 3; % stft using MTM
+
+for i = 1:length(electrodesList)
+    
+    disp(['elec' num2str(electrodesList(i))]);
+    clear analogData
+    load(fullfile(folderLFP,['elec' num2str(electrodesList(i)) '.mat']));
+    [~,mlogSTFTElec(:,i),~,t,f] = getSpectrum(analogData(goodPos,epoch),timeVals,specType);
+    
+end
+
+mlogSTFT = mean(mlogSTFTElec,2); % mean across electrodes
+
+end
 
 %--------------------------------------------------------------------------
 

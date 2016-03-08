@@ -59,6 +59,56 @@ elseif activeSide==1 % Map2
     conLL = LL.contrastPC2(validMap); 
     tfLL = LL.temporalFreqHz2(validMap);
     timeLL = LL.time2(validMap);
+    
+else % activeSide = [0 1]
+    validMap = find(LL.stimType1==1);
+    aziLL1 = LL.azimuthDeg1(validMap);
+    eleLL1 = LL.elevationDeg1(validMap);
+    sigmaLL1 = LL.sigmaDeg1(validMap);
+    if isfield(LL,'radiusDeg1')
+        radiusExists = 1;
+        radiusLL1 = LL.radiusDeg1(validMap);
+    else
+        radiusExists = 0;
+    end
+    sfLL1 = LL.spatialFreqCPD1(validMap);
+    oriLL1 = LL.orientationDeg1(validMap);
+    conLL1 = LL.contrastPC1(validMap); 
+    tfLL1 = LL.temporalFreqHz1(validMap);
+    timeLL1 = LL.time1(validMap);
+    
+    validMap = find(LL.stimType2==1);
+    aziLL2 = LL.azimuthDeg2(validMap);
+    eleLL2 = LL.elevationDeg2(validMap);
+    sigmaLL2 = LL.sigmaDeg2(validMap);
+    if isfield(LL,'radiusDeg2')
+        radiusExists = 1;
+        radiusLL2 = LL.radiusDeg2(validMap);
+    else
+        radiusExists = 0;
+    end
+    sfLL2 = LL.spatialFreqCPD2(validMap);
+    oriLL2 = LL.orientationDeg2(validMap);
+    conLL2 = LL.contrastPC2(validMap); 
+    tfLL2 = LL.temporalFreqHz2(validMap);
+    timeLL2 = LL.time2(validMap);
+    
+    %----------
+    % Combine all values
+    % Combinations depend on the gabors which are not NULL, which in turn
+    % depend on the specific protocol that is run.
+    % For protocols where a gabor is hidden (i.e. null), this ignores its
+    % parameter values and combines for the valid gabors only
+    aziLL = [aziLL1; aziLL2]; aziLL = (reshape(aziLL,[],1))';
+    eleLL = [eleLL1; eleLL2]; eleLL = (reshape(eleLL,[],1))';
+    sigmaLL = [sigmaLL1; sigmaLL2]; sigmaLL = (reshape(sigmaLL,[],1))';
+    sfLL = [sfLL1; sfLL2]; sfLL = (reshape(sfLL,[],1))';
+    oriLL = [oriLL1; oriLL2]; oriLL = (reshape(oriLL,[],1))';
+    conLL = [conLL1; conLL2]; conLL = (reshape(conLL,[],1))';
+    tfLL = [tfLL1; tfLL2]; tfLL = (reshape(tfLL,[],1))';
+    radiusLL = [radiusLL1; radiusLL2]; radiusLL = (reshape(radiusLL,[],1))';
+    
+    timeLL = timeLL1; % Vinay - if both gabors are drawn then assign timeLL1 (first drawn gabor) to timeLL
 end
 
 % Compare
@@ -135,22 +185,20 @@ else
         disp('***************Orientations do not match!!');
     end
     
-    if activeSide~=2
-        if compareValues(conLL,stimResults.contrast)
-            matchingParameters.contrast=1;
-            disp('Contrasts match.');
-        else
-            matchingParameters.contrast=0;
-            disp('*******************Contrasts do not match!!');
-        end
-        
-        if compareValues(tfLL,stimResults.temporalFrequency)
-            matchingParameters.temporalFrequency=1;
-            disp('Temporal frequencies match.');
-        else
-            matchingParameters.temporalFrequency=0;
-            disp('*******************Temporal frequencies do not match!!');
-        end
+    if compareValues(conLL,stimResults.contrast)
+        matchingParameters.contrast=1;
+        disp('Contrasts match.');
+    else
+        matchingParameters.contrast=0;
+        disp('*******************Contrasts do not match!!');
+    end
+
+    if compareValues(tfLL,stimResults.temporalFrequency)
+        matchingParameters.temporalFrequency=1;
+        disp('Temporal frequencies match.');
+    else
+        matchingParameters.temporalFrequency=0;
+        disp('*******************Temporal frequencies do not match!!');
     end
 end
 

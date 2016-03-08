@@ -842,6 +842,8 @@ folderSegment = fullfile(folderName, 'segmentedData');
 load(fullfile(folderSegment, 'LFP','lfpInfo'));
 elecList = analogChannelsStored;
 
+elecList(elecList>96) = []; % Vinay - to avoid considering EEG electrodes
+
 electrodeString='';
 for i=1:length(elecList);
     electrodeString = cat(2,electrodeString,['elec' num2str(elecList(i)) '|']);
