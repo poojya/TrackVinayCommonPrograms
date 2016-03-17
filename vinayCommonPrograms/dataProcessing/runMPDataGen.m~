@@ -12,7 +12,7 @@ tic;
 % clear;clc;close all;
 
 % Choose the protocols (the indices correspond to those in listProtocols.m)
-runForIndex = 11;
+runForIndex = 521;
 
 % Check the OS and set paths accordingly
 if isunix
@@ -25,10 +25,10 @@ end
 % gridType = 'EEG';
 gridType = 'Microelectrode';
 
-subjectName = 'kesari';
+subjectName = 'alpa';
 
 % choice of electrodes
-useHighRMSElectrodes = 0;
+useHighRMSElectrodes = 1;
 saveGaborInfoFlag = 1;
 
 % Load the protocol specifics
@@ -131,7 +131,7 @@ for n = 1:length(runForIndex)
                     
                     gaborMPFolder = fullfile(outputFolder,tag,'GaborMP');
                     importsigFolder = fullfile(outputFolder,tag,'ImportData_SIG');
-                    disp('Done! Now removing bulky folders: GaborMP and ImportData_SIG ...');
+                    disp('Removing bulky folders: GaborMP and ImportData_SIG folders...');
                     rmdir(gaborMPFolder,'s');
                     rmdir(importsigFolder,'s');
                     clear gaborInfo
