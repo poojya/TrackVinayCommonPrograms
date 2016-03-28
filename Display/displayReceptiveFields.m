@@ -52,7 +52,8 @@ hRFPlotFR   = subplot('Position',[0.35 0.8 0.125 0.1],'YTickLabel',[]);%,'XTickL
 hMaxValPlotFR  = subplot('Position',[0.35 0.71 0.125 0.06],'YAxisLocation','right');
 hMeansFR    = subplot('Position',[0.35 0.45 0.125 0.24],'XTickLabel',[],'YTickLabel',[],'box','on');
 
-[~,aValsUnique,eValsUnique] = loadRFParams(subjectName,expDates{1},protocolNames{1},folderSourceString,gridType,'LFP',filterStr,rfMeasureForLFP,poolingOption);
+% [~,aValsUnique,eValsUnique] = loadRFParams(subjectName,expDates{1},protocolNames{1},folderSourceString,gridType,'LFP',filterStr,rfMeasureForLFP,poolingOption);
+[~,aValsUnique,eValsUnique] = loadRFParams(subjectName,expDates{1},protocolNames{1},folderSourceString,gridType,'Spikes',filterStr,rfMeasureForLFP,poolingOption);
 
 numAzi=length(aValsUnique);
 numEle=length(eValsUnique);
@@ -734,8 +735,12 @@ for i=1:numDays
     end
 
     
-    rfValuesLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP',['rfValues' fileTag filterStr '.mat']));
-    rfParamsLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP',['rfParams' num2str(poolingOption) fileTag filterStr '.mat']));
+%     rfValuesLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP',['rfValues' fileTag filterStr '.mat']));
+%     rfParamsLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP',['rfParams' num2str(poolingOption) fileTag filterStr '.mat']));
+    
+    rfValuesLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','Spikes',['rfValues' fileTag filterStr '.mat']));
+    rfParamsLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','Spikes',['rfParams' num2str(poolingOption) fileTag filterStr '.mat']));
+    
     if strcmp(rfMeasureForLFP,'RMS')
        rfVals(i,:,:,:,:) = rfValuesLFP.rfValsRMS; %#ok<*AGROW>
        params = rfParamsLFP.paramsRMSScaled;

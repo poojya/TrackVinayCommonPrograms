@@ -9,10 +9,10 @@
 % modified: 23 December, 2015
 %==========================================================================
 tic;
-clear;clc;close all;
+% clear;clc;close all;
 
 % Choose the protocols (the indices correspond to those in listProtocols.m)
-runForIndex = 83:86;
+runForIndex = 11;
 
 % Check the OS and set paths accordingly
 if isunix
@@ -25,35 +25,44 @@ end
 % gridType = 'EEG';
 gridType = 'Microelectrode';
 
-subjectName = 'alpa';
+subjectName = 'kesari';
 
 % choice of electrodes
-useHighRMSElectrodes = 1;
+useHighRMSElectrodes = 0;
 saveGaborInfoFlag = 1;
 
 % Load the protocol specifics
 if strncmp(gridType,'EEG',3)
-    [~,subjectNames,expDates,protocolNames] = listProtocols;
-    % define the number of channels
-    channelNumbers = 1:21;
+    if strcmpi(subjectName,'alpa') || strcmpi(subjectName,'kesari')
+        [expDates,protocolNames,stimTypes] = eval(['allProtocols' upper(subjectName(1)) subjectName(2:end) gridType]);
+        mixedList = 0;
+    else
+        [~,subjectNames,expDates,protocolNames] = listProtocols;
+        % define the number of channels
+        channelNumbers = 1:21;
+        mixedList = 1;
+    end
 else
     [expDates,protocolNames,stimTypes] = eval(['allProtocols' upper(subjectName(1)) subjectName(2:end) gridType]);
+    mixedList = 0;
 end
 
 % Specify the time epoch to be decomposed and analyzed
-selectTime = 0;
-tlen = 1024; 
+
+selectTime = 0; % set this if you want to decompose a sub-epoch of the analogData
+tlen = 1024; % length of the sub-epoch (preferably a power of 2)
+
 if selectTime
-    tMin(1) = -0.512; % base
-    tMin(2) = 0.25; % stim
+    tMin(1) = -0.512; % base start point
+    tMin(2) = 0.25; % stim start point
 else
-    tMin = 0;
+    tMin = 0; % this value isn't used; instead start from the first time point in timeVals
 end
 
 % Main loop to generate MP data
 for n = 1:length(runForIndex)
     for ti=1:length(tMin)
-        if strncmp(gridType,'EEG',3)
+        if mixedList
             subjectName = subjectNames{runForIndex(n)};
         end
         expDate = expDates{runForIndex(n)};
@@ -90,9 +99,10 @@ for n = 1:length(runForIndex)
             mptimeVals = timeVals(tRange);
             save(fullfile(outputFolder,'mptimeVals.mat'),'mptimeVals');
         else
-            tRange = [];
+            tRange = []; % takes entire epoch
             outputFolder = fullfile(folderNameMain,'mpAnalysis');
             makeDirectory(outputFolder);
+            disp('Decomposing entire epoch....');
         end
 
         disp(['Number of electrodes/channels: ' num2str(length(channelNumbers))]);
@@ -120,16 +130,25 @@ for n = 1:length(runForIndex)
                     tag = ['elec' num2str(channelNumbers(i))];
                     gaborInfo = getGaborData(outputFolder,tag,1);
                     save(fullfile(outputFolder,tag,'gaborInfo.mat'),'gaborInfo');
+                    
+                    gaborMPFolder = fullfile(outputFolder,tag,'GaborMP');
+                    importsigFolder = fullfile(outputFolder,tag,'ImportData_SIG');
+                    disp('Done! Now removing bulky folders: GaborMP and ImportData_SIG ...');
+                    rmdir(gaborMPFolder,'s');
+                    rmdir(importsigFolder,'s');
                     clear gaborInfo
                 end
             else
                 disp(['gaborInfo already exists for channel ' num2str(channelNumbers(i))]);
             end
+            
         end
     end
 end
 toc;
-%% Reconstruct energy spectrum for each trial and store the energy matrix
+
+%**************************************************************************
+%%% Reconstruct energy spectrum for each trial and store the energy matrix
 % Vinay - not a good startegy this! Creates huge files!
 % 
 % for i = 1:length(channelNumbers)
