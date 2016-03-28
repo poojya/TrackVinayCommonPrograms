@@ -18,7 +18,7 @@ runForIndex = 83:86;
 if isunix
     folderSourceString = '/media/vinay/SRLHD02M/';
 elseif ispc
-    folderSourceString = 'J:\';
+    folderSourceString = 'C:\';
 end
 
 % define grid
@@ -41,7 +41,7 @@ else
 end
 
 % Specify the time epoch to be decomposed and analyzed
-selectTime = 1;
+selectTime = 0;
 tlen = 1024; 
 if selectTime
     tMin(1) = -0.512; % base

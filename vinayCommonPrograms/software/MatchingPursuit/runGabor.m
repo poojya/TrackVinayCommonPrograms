@@ -6,6 +6,12 @@
 
 function runGabor(foldername,tag,Numb_points, Max_iterations)
 
+if ispc
+    executable = ['"' fullfile(platformSpecificNameMPP(removeIfPresentMPP(fileparts(mfilename('fullpath')),'matlab')),'source','gabord.exe') '"'];
+else
+    executable = fullfile(platformSpecificNameMPP(removeIfPresentMPP(fileparts(mfilename('fullpath')),'matlab')),'source','gabord');
+end
+
 if ~exist('Numb_points')        Numb_points=1024;       end
 if ~exist('Max_iterations')     Max_iterations=500;     end
 
@@ -61,5 +67,9 @@ fclose(fp);
 % sourcefolder = '/Users/sray/Research/timeFrequency/mpp/programs/source/';
 % sourcefolder = '/Documents/MP/source/'; % Vinay
 sourcefolder = '~/Documents/MP/source/'; % Vinay for HP laptop
-commandline = [sourcefolder 'gabord ' filename];
+if ispc
+    commandline = [executable ' ' filename];
+else
+    commandline = [sourcefolder 'gabord ' filename];
+end
 unix(commandline)

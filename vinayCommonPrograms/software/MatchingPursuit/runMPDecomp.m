@@ -4,8 +4,18 @@
 
 function runMPDecomp(filename)
 
+if ispc
+    executable = ['"' fullfile(platformSpecificNameMPP(removeIfPresentMPP(fileparts(mfilename('fullpath')),'matlab')),'source','gabord.exe') '"'];
+else
+    executable = fullfile(platformSpecificNameMPP(removeIfPresentMPP(fileparts(mfilename('fullpath')),'matlab')),'source','gabord');
+end
+
 sourcefolder = '~/Documents/MP/source/'; % Vinay
-commandline = [sourcefolder 'gabord ' filename];
+if ispc
+    commandline = [executable ' ' filename];
+else
+    commandline = [sourcefolder 'gabord ' filename];
+end
 unix(commandline)
 
 end
