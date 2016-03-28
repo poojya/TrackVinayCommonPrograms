@@ -114,7 +114,9 @@ if ~isempty(showElectrodes)
             plot(timeVals,analogDataSegment(setdiff(1:numTrials,badTrials),:),'color','k');
             hold on;
             j = analogChannelsStored==channelNum;
-            plot(timeVals,analogDataSegment(allBadTrials{j},:),'color','r');
+            if ~isempty(allBadTrials{j})
+                plot(timeVals,analogDataSegment(allBadTrials{j},:),'color','r');
+            end
             axis tight;
         end
     end

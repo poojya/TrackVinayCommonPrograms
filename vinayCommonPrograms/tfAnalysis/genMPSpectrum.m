@@ -57,7 +57,9 @@ mpSpectrum = squeeze(mean(elecMPSpectrum,3));
 
 if exist('mpSaveSpectrumName','var')
     disp('saving spectrum data...');
-    save(fullfile(mpFolder,'meanSpectra',mpSaveSpectrumName), 'mpSpectrum');
+    meanSpectraFolder = fullfile(mpFolder,'meanSpectra');
+    makeDirectory(meanSpectraFolder);
+    save(fullfile(meanSpectraFolder,mpSaveSpectrumName), 'mpSpectrum');
 end
 
 

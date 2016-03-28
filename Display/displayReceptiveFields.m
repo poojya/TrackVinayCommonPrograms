@@ -735,8 +735,12 @@ for i=1:numDays
     end
 
     
-    rfValuesLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP',['rfValues' fileTag filterStr '.mat']));
-    rfParamsLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP',['rfParams' num2str(poolingOption) fileTag filterStr '.mat']));
+%     rfValuesLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP',['rfValues' fileTag filterStr '.mat']));
+%     rfParamsLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','LFP',['rfParams' num2str(poolingOption) fileTag filterStr '.mat']));
+    
+    rfValuesLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','Spikes',['rfValues' fileTag filterStr '.mat']));
+    rfParamsLFP = load(fullfile(folderSourceString,'data',subjectName,gridType,expDates{i},protocolNames{i},'RFMeasures','Spikes',['rfParams' num2str(poolingOption) fileTag filterStr '.mat']));
+    
     if strcmp(rfMeasureForLFP,'RMS')
        rfVals(i,:,:,:,:) = rfValuesLFP.rfValsRMS; %#ok<*AGROW>
        params = rfParamsLFP.paramsRMSScaled;
