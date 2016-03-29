@@ -8,29 +8,24 @@
 % modified again 13 October 2015
 % modified: 23 December, 2015
 %==========================================================================
-tic;
-% clear;clc;close all;
-
-% Choose the protocols (the indices correspond to those in listProtocols.m)
-runForIndex = 11;
-
+% Choose the protocols (the indices correspond to those in allProtocols file)
+runForIndex = 521;
 % Check the OS and set paths accordingly
 if isunix
     folderSourceString = '/media/vinay/SRLHD02M/';
 elseif ispc
-    folderSourceString = 'C:\';
+    cd W:\; % You must change directory to the folder that contains the 'data' folder.
+    folderSourceString = '..\'; % in case of windows path with colon (say 'F:') are not allowed.
+    % Therefore we change directory to the folder where 'data' is stored
+    % and then define paths using '..\' - As a result you directly start
+    % your path from the folder containing 'data'
 end
-
 % define grid
-% gridType = 'EEG';
 gridType = 'Microelectrode';
-
-subjectName = 'kesari';
-
+subjectName = 'alpa';
 % choice of electrodes
 useHighRMSElectrodes = 0;
 saveGaborInfoFlag = 1;
-
 % Load the protocol specifics
 if strncmp(gridType,'EEG',3)
     if strcmpi(subjectName,'alpa') || strcmpi(subjectName,'kesari')
@@ -46,9 +41,7 @@ else
     [expDates,protocolNames,stimTypes] = eval(['allProtocols' upper(subjectName(1)) subjectName(2:end) gridType]);
     mixedList = 0;
 end
-
 % Specify the time epoch to be decomposed and analyzed
-
 selectTime = 0; % set this if you want to decompose a sub-epoch of the analogData
 tlen = 1024; % length of the sub-epoch (preferably a power of 2)
 
@@ -58,7 +51,6 @@ if selectTime
 else
     tMin = 0; % this value isn't used; instead start from the first time point in timeVals
 end
-
 % Main loop to generate MP data
 for n = 1:length(runForIndex)
     for ti=1:length(tMin)
@@ -145,8 +137,6 @@ for n = 1:length(runForIndex)
         end
     end
 end
-toc;
-
 %**************************************************************************
 %%% Reconstruct energy spectrum for each trial and store the energy matrix
 % Vinay - not a good startegy this! Creates huge files!
